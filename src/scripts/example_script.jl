@@ -8,12 +8,12 @@ function calculate()::SpectrumData
 # 1. Define system    
     system = Main.tJmodel1D.System(
         t           = 1.0,      # hole hopping
-        J           = -1.0,      # spin coupling
+        J           = 1.0,      # spin coupling
         λ           = 1.0,      # magnon interaction
         α           = 1.0,      # XXZ anisotropy scaling 
         size        = 16,       # number of lattice sites
         electrons   = 16,       # number of electrons
-        spinsUp     = 0,        # number of spins up
+        spinsUp     = 8,        # number of spins up
         momentum    = 0         # internal momentum subspace
     )
     
