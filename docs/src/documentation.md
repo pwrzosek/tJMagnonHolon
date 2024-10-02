@@ -85,6 +85,9 @@ Main.tJmodel1D.checkSystem
 ```@docs
 Main.tJmodel1D.factorize
 ```
+!!! note "Algorithm details"
+    For more details about diagonalization procedure see documentation of 
+    [eigsolve](https://jutho.github.io/KrylovKit.jl/stable/man/eig/#KrylovKit.eigsolve) function from [KrylovKit.jl](https://jutho.github.io/KrylovKit.jl/stable) package.
 
 ### Index
 ```@index
