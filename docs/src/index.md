@@ -14,7 +14,7 @@ A set of modules for t-J model (related) Hamiltonians diagonalization and variou
 - Generate full (small systems) or partial (large systems) set of eigen-values and related eigen-vectors of t-J model.
 - Calculate operators action on wave functions in magnon-holon basis.
 - Calculate Greens functions and spectral functions of t-J model.
-- Save data to JSON files and use them as datasets in Mathematica, R, Matlab, etc.
+- Save data to JSON files and use them as data sets in Mathematica, R, Python, etc.
 
 The [Guide](@ref) provides a tutorial explaining how to use above features.
 You will find there practical examples of scripts for running your calculations or how to extend the existing code base with your own operators.
