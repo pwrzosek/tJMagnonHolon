@@ -2,13 +2,13 @@
 
 using OrderedCollections
 
-SpectrumData = OrderedDict{String, Union{Int64, Float64, Array{Float64}, Array{ComplexF64}}}
+Data = OrderedDict{String, Union{Int64, Float64, Array{Float64}, Array{ComplexF64}}}
 
-function calculate()::SpectrumData
+function calculate()::Data
 # 1. Define system    
     system = Main.tJmodel1D.System(
         t           = 1.0,      # hole hopping
-        J           = -1.0,      # spin coupling
+        J           = 1.0,      # spin coupling
         λ           = 1.0,      # magnon interaction
         α           = 1.0,      # XXZ anisotropy scaling 
         size        = 16,       # number of lattice sites
@@ -42,7 +42,7 @@ function calculate()::SpectrumData
     end
 
 # 5. Return whatever you need
-    return SpectrumData(
+    return Data(
         "coupling"      => system.J,
         "interaction"   => system.λ,
         "size"          => system.size,
@@ -54,19 +54,19 @@ end
 
 
 ### Run calculation (script above)
-spectrumData = calculate()
+data = calculate()
 
 
 ### Saving Spectrum Data
-Main.Utils.saveData([spectrumData], name = "test")
+Main.Utils.saveData([data], name = "test")
 
 
 ### Plotting [optional; only for quick lookup]
 using Plots
 
-k = spectrumData["momentum"]
-ω = spectrumData["energy"]
-A = spectrumData["spectrum"]
+k = data["momentum"]
+ω = data["energy"]
+A = data["spectrum"]
 
 mapfig = heatmap(k, ω, A, clim = (0, 1), xlabel = "k / π", ylabel = "ω");
 display(mapfig) # image window will disappear if julia process stops
