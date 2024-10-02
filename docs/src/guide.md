@@ -1,18 +1,210 @@
 # Guide
 
+The purpose of this [Guide](@ref) is to provide a simple introduction to [tJMagnonHolon](@ref) features.
+It will allow you to start producing research relevant data right away.
+
 ## Introduction
 
-## Examples
+To start using [tJMagnonHolon](@ref) you need a distribution of Julia.
+You can download recent stable version from its official website [julialang.org](https://julialang.org).
+
+Following packages are required for [tJMagnonHolon](@ref) code to work.
+```
+OrderedCollections
+LinearAlgebra
+SparseArrays
+KrylovKit
+DelimitedFiles
+Dates
+JSON
+```
+To download them, open terminal and move to the following directory.
+```
+.../tJMagnonHolon/src/
+``` 
+In terminal type following command.
+```
+julia setup.jl
+```
+Required packages will be automatically downloaded and added to julia (you need an internet connection). This step has to be done only once. 
+You can also add packages by yourself (e.g. if you already have some of them installed and don't wish to upgrade). 
+
+## Tutorial
+
+Let us start with the basics.
+
+### Running the code
+ 
+- open terminal and move to `.../tJMagnonHolon/src/` directory.
+    - in terminal type `julia` to start julia process, then in Julia REPL type `include("run.jl")`.
+    - alternatively type `julia run.jl` (to run without graphical interface)
+
+
+File `run.jl` will execute `example_script.jl` from `.../tJMagnonHolon/src/scripts/` directory.
+You can add more scripts to `.../tJMagnonHolon/src/scripts/` (or to some other location). 
+To execute one or more of those scripts include them in `run.jl` file.
+For instance, to run `.../tJMagnonHolon/scripts/my_script.jl` add fillowing line to `run.jl`.
+```Julia
+include("./scripts/my_script.jl")
+```
+
+If you don't want `example_script.jl` to be executed, remove or comment out from `run.jl` following line. 
+```Julia
+include("./scripts/example_script.jl")
+```
+
+### Basic structure
+
+Let us now discuss the features of the [tJMagnonHolon](@ref).
+Open `example_script.jl` on a side and compare how the features we are going to discuss are put together in a single script.
+
+!!! tip "[optional] Basic structure"
+    It is convenient to define output type for results we want to collect. Let us call it `Data`.
+    ```Julia
+    Data = OrderedDict{String, Union{Int64, Float64, Array{Float64}, Array{ComplexF64}}}
+    ```
+    You can write your script in the main scope of Julia but wrapping your script in a function (or few functions) helps in organizing and reusing the code.
+    ```Julia
+    function calculate()::Data
+        ...
+    end
+    ```
+    Above defined function `calculate()` is supposed to return output of type `Data`.
+    You can also add some arguments to function `calculate()` or use different function name.
+
 
 ### System definition
 
-### Basis and Model matrix generation
+To perform any calculations we need to first define parameters of our system.
+All the system parameters are handled by [`System`](@ref Main.tJmodel1D.System) structure from `tJmodel1D` module.
+Let us use `system` for a corresponding variable name.
+There are multiple ways to define `system` but probably most readble is to use 
+[`System`](@ref Main.tJmodel1D.System(::Main.tJmodel1D.System)) 
+function and provide a set of keyword arguments as in example below. 
+The order in which keyword arguments are listed is not important.
 
-### Model factorization
+```@example
+system = Main.tJmodel1D.System(
+    t           = 1.0,      # hole hopping
+    J           = 1.0,      # spin coupling
+    λ           = 1.0,      # magnon interaction
+    α           = 1.0,      # XXZ anisotropy scaling 
+    size        = 16,       # number of lattice sites
+    electrons   = 16,       # number of electrons
+    spinsUp     = 8,        # number of spins up
+    momentum    = 0         # internal momentum subspace
+)
+```
 
-### Spectral (and Greens) function calculation
+#### Other ways to define System
+
+Used in the above example values for system parameters are equal to the default values defined inside the `tJmodel1D` module. 
+To create a `system` with default values it is enaugh to call 
+[`System`](@ref Main.tJmodel1D.System(::Main.tJmodel1D.System)) 
+function without arguments.
+```@example
+system = Main.tJmodel1D.System()
+```
+
+You can also provide any subset of keyword arguments. Not provided arguments will take default values.
+```@example
+system = Main.tJmodel1D.System(spinsUp = 0)
+```
+
+Additionally, if you are alergic to explicitely writing arguments names, you can use a constructor of [`System`](@ref Main.tJmodel1D.System) structure. 
+In this case the order of arguments matters and it follows: `(t, J, λ, α, size, electrons, spinsUp, momentum)`. 
+```@example 1
+system = Main.tJmodel1D.System(1.0, 1.0, 1.0, 1.0, 16, 16, 8, 0)
+```
+
+[`System`](@ref Main.tJmodel1D.System) structure is immutable meaning that once you define it you cannot change values of its fields.
+But sometimes you may want to create a new instance of [`System`](@ref Main.tJmodel1D.System) 
+(let's call it `newSystem`) that has only one or few fields changed with respect to some previously defined `system`.
+In such case you can provide `system` as an argument to [`System`](@ref Main.tJmodel1D.System(::Main.tJmodel1D.System)) function, see below.
+```@example 1
+newSystem = Main.tJmodel1D.System(system, electrons = system.electrons - 1, spinsUp = system.spinsUp - 1)
+```
+Defined above `newSystem` has one electron less and one spin up less than `system` (e.g. one electron with spin up was removed). Values of other parameters are copied from `system`.
+
+### Model generation and factorization
+
+Once `system` is assigned you can call defined in `tJmodel1D` module function [`run`](@ref Main.tJmodel1D.run) to generate Hamiltonian matrix for subspace described by `system` and factorize it.
+```Julia
+system, basis, model, factorization = Main.tJmodel1D.run(system)
+```
+This function returns 3 objects and a tuple:
+- [`System`](@ref Main.tJmodel1D.System) - parameters of the system subspace.
+- [`Basis`](@ref Main.tJmodel1D.Basis) - basis of representative magnon-holon states for the system subspace.
+- [`Model`](@ref Main.tJmodel1D.Model) - generated sparse matrix of the Hamiltonian for the system subspace.
+- `factorization = (eigenvalues, eigenvectors, convergenceInfo)` - results of diagonalization procedure.
+
+!!! note "Type and value note"
+    - Note that `eltype(eigenvalues) <: ComplexF64`. Complex numbers may be returned if `Model` matrix has complex coefficients.
+    - Note that eigenvectors are determined with respect to random complex phase that changes from run to run.
+
+By default only 1 eigenvalue with lowest real part is calculated. To calculate more eigenvalues use `howmany` keyword argument.
+For example, code below finds singlet and triplet energy of 2-site antiferromagnetic spin 1/2 Heisenberg chain for spin coupling J = 1.
+```@example 2
+system = Main.tJmodel1D.System(J = 1.0, size = 2, electrons = 2, spinsUp = 1)
+system, basis, model, factorization = Main.tJmodel1D.run(system, howmany = 13) 
+                            ### we pretend we don't know it should be 2 ---^
+eigenvalues, eigenvectors, convergenceInfo = factorization
+real.(eigenvalues)
+[-2.0, 0.0] # hide
+```
+
+!!! warn "Convergence"
+    To make sure there are no poorly converged values, it is always good to check `convergenceInfo`.
+    ```Julia
+    println(convergenceInfo)
+    ```
+    Norm of residual far from zero indicate poorly converged value.
+
+If you calculate only few eigenvalues, this situation is unlikely to happen, but in case you cannot converge desired number of eigenvalues, you may need to increase dimension of Krylov subspace.
+You can achieve this by setting keyword argument `kryldim` to value higher than 30 (which is default value).
+You can also set value smaller than 30 to save memory e.g. when looking for the lowest eigenvalue (and eigenvector) of a large system.
+Remember that `kryldim` cannot be smaller than `howmany`.
+```Julia
+system, basis, model, factorization = Main.tJmodel1D.run(system, howmany = 40, kryldim = 100)
+```
+
+#### Skipping diagonalization
+
+If you just need Hamiltonian matrix and its basis tell the [`run`](@ref Main.tJmodel1D.run) function to skip the factorization procedure by setting keyword argument `eigsolve = false`.
+In such case `factorization` will recieve `missing` value from [`run`](@ref Main.tJmodel1D.run).
+```Julia
+system, basis, model, factorization = Main.tJmodel1D.run(system, eigsolve = false)
+```
+
+!!! tip
+    Use placeholders if you don't need some of the returned objects (or you want to save memory).
+    ```Julia
+    _, _, _, factorization = Main.tJmodel1D.run(system)
+    system, basis, model, _ = Main.tJmodel1D.run(system, eigsolve = false)
+    ```
+
+### List of operators
+
+Operators are defined in module `Operators`. You can use any of the predefiend operators listed below.
+
+```
+operator list
+.
+.
+.
+```
+
+You can also add your own operators to `Operators` module, see section [Custom operators](@ref).
+
+### Spectral function and Greens function
+
+
 
 ### Applying operators to arbitrary wave functions
 
 ## Custom operators
+
+- where to put new operators
+- operator function design
+- send to advanced for maths
 
