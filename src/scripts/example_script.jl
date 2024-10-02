@@ -13,7 +13,7 @@ function calculate()::Data
         α           = 1.0,      # XXZ anisotropy scaling 
         size        = 16,       # number of lattice sites
         electrons   = 16,       # number of electrons
-        spinsUp     = 0,        # number of spins up
+        spinsUp     = 8,        # number of spins up
         momentum    = 0         # internal momentum subspace
     )
     
