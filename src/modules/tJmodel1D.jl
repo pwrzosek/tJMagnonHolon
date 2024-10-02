@@ -105,13 +105,16 @@ end
 Model = SparseMatrixCSC{Complex{Float64},Int64}
 
 """
-    run(input::Union{Missing, System} = missing; howmany = 3, factor = true)
+    run(input::Union{Missing, System} = missing; eigsolve = true, howmany = 1, kryldim = 30)
 
 Run model diagonalization procedure. If no input provided, construct input using default arguments.
-Return `(system::System, basis::Basis, model::Model, factorization)` where `factorization` is `nothing` if `factor == false`.
-If `factor == true` then `factorization = (eigenvalues, eigenvectors, convergenceInfo)`.
+Return `(system::System, basis::Basis, model::Model, factorization)` where `factorization` is `nothing` if `eigsolve == false`.
+If `eigsolve == true` then `factorization = (eigenvalues, eigenvectors, convergenceInfo)`.
+Algorithm tries to converge at least `howmany` eigenvalues. 
+Always print `convergenceInfo` to check accuracy as there is no warning if eigenvalues are poorly converged.
+Keyword `kryldim` allows to specify the dimension of Krylov subspace for diagonalization algorithm (implicitely restarted Lanczos iteration).
 """
-function run(input::Union{Missing, System} = missing; howmany = 3, factor = true)
+function run(input::Union{Missing, System} = missing; eigsolve = true, howmany = 1, kryldim = 30)
     system::System = if input === missing
         @info "No input detected. Applying default input arguments."
         System()
@@ -128,9 +131,9 @@ function run(input::Union{Missing, System} = missing; howmany = 3, factor = true
     println("\n", "Calculation of matrix coefficients:")
     @time model::Model = makeModel(basis, system)
     
-    if factor
+    if eigsolve
         println("\n", "Factorization:")
-        @time factorization = factorize(model, howmany = howmany, kryldim = max(30, 3 * howmany)) 
+        @time factorization = factorize(model, howmany = howmany, kryldim = kryldim) 
         return system, basis, model, factorization
     else
         return system, basis, model, nothing
