@@ -17,14 +17,14 @@ struct Krylov
 end
 
 """
-    run(ωRange, iDelta, system, ψ, operator, args...; krylovDimension = 400) -> Vector{Float64}
+    run(ωRange, δ, system, ψ, operator, args...; krylovDimension = 400) -> Vector{Float64}
 
-Apply `operator` with arguments `args...` to `system` wave function `ψ`. Then calculate spectral function over `ωRange` with artificial broadening `iDelta` using Lanczos tridiagonalization with initial state `Ô | ψ >`.
+Apply `operator` with arguments `args...` to `system` wave function `ψ`. Then calculate spectral function over `ωRange` with artificial broadening `δ` using Lanczos tridiagonalization with initial state `Ô | ψ >`.
 Return Vector{Float64} of size `length(ωRange)` with calculated values of the spectral function. A keyword argument `krylovDimension` defines maximum dimension of Krylov subspace for Lanczoas tridiagonalization algorithm. Typically `krylovDimension` ∈ [100, 1000] gives best performance.
-Small values of 'krylovDimension` speed up the calculation process but reduce the quality of spectral function. It is not advised to set Krylov dimension too high - performance eventually drops due to orthogonality loss.
+Small values of `krylovDimension` speed up the calculation process but reduce the quality of spectral function. It is not advised to set Krylov dimension too high - performance eventually drops due to orthogonality loss.
 Return Greens function instead if keyword argument `returnGreensFunction` is set to `true`.
 """
-function run(ωRange, iDelta, system, ψ, operator, args...; krylovDimension = 400, returnGreensFunction::Bool = false)
+function run(ωRange, δ, system, ψ, operator, args...; krylovDimension = 400, returnGreensFunction::Bool = false)
     println("Evaluating step for operator args: ", args...)    
     spectrum = if returnGreensFunction
         zeros(ComplexF64, length(ωRange))
@@ -40,7 +40,7 @@ function run(ωRange, iDelta, system, ψ, operator, args...; krylovDimension = 4
         basis = Main.tJmodel1D.makeBasis(system)
         model = Main.tJmodel1D.makeModel(basis, system)
 
-        spectrum += Main.SpectralFunction.calculate(ωRange, iDelta, initialState, model, krylovDimension, returnGreensFunction)
+        spectrum += Main.SpectralFunction.calculate(ωRange, 1.0im * δ, initialState, model, krylovDimension, returnGreensFunction)
     end
     println()
 
@@ -152,3 +152,6 @@ end
 
 
 end
+
+
+### Q: Greens function templates?
