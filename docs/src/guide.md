@@ -26,7 +26,7 @@ In terminal type following command.
 ```
 julia setup.jl
 ```
-Required packages will be automatically downloaded and added to julia (you need an internet connection). This step has to be done only once. 
+Required packages will be automatically downloaded and added to Julia (you need an internet connection). This step has to be done only once. 
 You can also add packages by yourself (e.g. if you already have some of them installed and don't wish to upgrade). 
 
 ## Tutorial
@@ -96,6 +96,23 @@ system = Main.tJmodel1D.System(
 )
 ```
 
+The first four parameters ``\textcolor{orange}{t}, \textcolor{orange}{J}, \textcolor{orange}{\lambda}, \textcolor{orange}{\alpha}`` are parameters of the Hamiltonian ``\hat{H}`` (in magnon-holon basis).
+```math
+\hat{H} = \hat{H}_t + \hat{H}_{xy} + \hat{H}_z
+```
+```math
+\hat{H}_t = \textcolor{orange}{t}\sum_{\langle i,j \rangle} \hat{P}_i \hat{h}_i^\dag \hat{h}_j \left( \hat{a}_i + \hat{a}_j^\dag \right) \hat{P}_j + \textrm{H.c.}
+```
+```math
+\hat{H}_{xy} = \frac{\textcolor{orange}{\alpha} \textcolor{orange}{J}}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left(\hat{P}_i \hat{P}_j \hat{a}_i \hat{a}_j + \mathrm{H.c} \right) \hat{h}_j \hat{h}_j^\dag
+```
+```math
+\hat{H}_{z} = \frac{\textcolor{orange}{J}}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left(\hat{a}_i^\dag \hat{a}_i + \hat{a}_j^\dag \hat{a}_j - 2 \textcolor{orange}{\lambda} \hat{a}_i^\dag \hat{a}_i \hat{a}_j^\dag \hat{a}_j - 1 \right) \hat{h}_j \hat{h}_j^\dag
+```
+
+The last four parameters ``\mathrm{\textcolor{orange}{size}, \textcolor{orange}{electrons}, \textcolor{orange}{spinsUp}, \textcolor{orange}{momentum}}`` are conserved by the Hamiltonian and point to a single subspace of the model (orthogonal to other subspaces).
+See section [Advanced] for detailed discussion.
+
 #### Other ways to define System
 
 Used in the above example values for system parameters are equal to the default values defined inside the `tJmodel1D` module. 
@@ -139,10 +156,23 @@ This function returns 3 objects and a tuple:
 - `factorization = (eigenvalues, eigenvectors, convergenceInfo)` - results of diagonalization procedure.
 
 !!! note "Type and value note"
-    - Note that `eltype(eigenvalues) <: ComplexF64`. Complex numbers may be returned if `Model` matrix has complex coefficients.
-    - Note that eigenvectors are determined with respect to random complex phase that changes from run to run.
+    - Note that `eltype(eigenvalues) <: ComplexF64`. Complex numbers may be returned if `Model` matrix has complex coefficients (even if imaginary parts are numerically zero). It is safe to assume that:
+    ```Julia        
+    eigenvalues::Vector{ComplexF64}
+    eigenvectors::Vector{Vector{ComplexF64}}
+    ```
+    - Note that eigenvectors are determined up to a random (complex) phase that changes from run to run.
 
-By default only 1 eigenvalue with lowest real part is calculated. To calculate more eigenvalues use `howmany` keyword argument.
+You can easily access calculated eigenvalues and eigenvectors. For example, the first value and its corresponding vector:
+```Julia
+ψ = eigenvectors[1]
+E0 = real(eigenvalues[1])
+```
+
+!!! note
+    Eigenvalues are sorted with respect to real part from smallest to largest.
+
+By default only 1 eigenvalue with smallest real part will be calculated. To calculate more eigenvalues use `howmany` keyword argument.
 For example, code below finds singlet and triplet energy of 2-site antiferromagnetic spin 1/2 Heisenberg chain for spin coupling J = 1.
 ```@example 2
 system = Main.tJmodel1D.System(J = 1.0, size = 2, electrons = 2, spinsUp = 1)
@@ -154,13 +184,13 @@ real.(eigenvalues)
 ```
 
 !!! warn "Convergence"
-    To make sure there are no poorly converged values, it is always good to check `convergenceInfo`.
+    To make sure that there are no poorly converged values, it is always good to check `convergenceInfo`.
     ```Julia
     println(convergenceInfo)
     ```
-    Norm of residual far from zero indicate poorly converged value.
+    Norms of residuals close to zero indicate well converged values. 
 
-If you calculate only few eigenvalues, this situation is unlikely to happen, but in case you cannot converge desired number of eigenvalues, you may need to increase dimension of Krylov subspace.
+If you calculate only few eigenvalues, it is unlikely to happen, but in case you cannot converge desired number of eigenvalues, you may need to increase dimension of Krylov subspace.
 You can achieve this by setting keyword argument `kryldim` to value higher than 30 (which is default value).
 You can also set value smaller than 30 to save memory e.g. when looking for the lowest eigenvalue (and eigenvector) of a large system.
 Remember that `kryldim` cannot be smaller than `howmany`.
@@ -177,7 +207,7 @@ system, basis, model, factorization = Main.tJmodel1D.run(system, eigsolve = fals
 ```
 
 !!! tip
-    Use placeholders if you don't need some of the returned objects (or you want to save memory).
+    Use dummy variables if you don't need some of the returned objects.
     ```Julia
     _, _, _, factorization = Main.tJmodel1D.run(system)
     system, basis, model, _ = Main.tJmodel1D.run(system, eigsolve = false)
@@ -186,23 +216,79 @@ system, basis, model, factorization = Main.tJmodel1D.run(system, eigsolve = fals
 ### List of operators
 
 Operators are defined in module `Operators`. You can use any of the predefiend operators listed below.
+You can also add your own operators to `Operators` module.
+See section [Operators](@ref) to learn about operator functions design.
 
-```
-operator list
-.
-.
-.
+- ``\hat{S}_{k}^{z}``, ``\hat{S}_{r}^{z}``, ``\hat{S}_{k}^{+}``, ``\hat{S}_{r}^{+}``, ``\hat{S}_{k}^{-}``, ``\hat{S}_{r}^{-}``
+```Julia
+Sk_z(k::Int64; state::State, system::System)
+Sr_z(r::Int64; state::State, system::System)
+Sk_plus(k::Int64; state::State, system::System)
+Sr_plus(r::Int64; state::State, system::System)
+Sk_minus(k::Int64; state::State, system::System)
+Sr_minus(r::Int64; state::State, system::System)
 ```
 
-You can also add your own operators to `Operators` module, see section [Custom operators](@ref).
+- ``\hat{\tilde{c}}_{k\uparrow}``, ``\hat{\tilde{c}}_{r\uparrow}``, ``\hat{\tilde{c}}_{k\downarrow}``, ``\hat{\tilde{c}}_{r\downarrow}``
+```Julia
+ck_up(k::Int64; state::State, system::System)
+cr_up(r::Int64; state::State, system::System)
+ck_down(k::Int64; state::State, system::System)
+cr_down(r::Int64; state::State, system::System)
+```
+
+- ``\hat{\tilde{c}}_{k\uparrow}^{\dag}``, ``\hat{\tilde{c}}_{r\uparrow}^{\dag}``, ``\hat{\tilde{c}}_{k\downarrow}^{\dag}``, ``\hat{\tilde{c}}_{r\downarrow}^{\dag}``
+```Julia
+ck_up_dag(k::Int64; state::State, system::System)
+cr_up_dag(r::Int64; state::State, system::System)
+ck_down_dag(k::Int64; state::State, system::System)
+cr_down_dag(r::Int64; state::State, system::System)
+```
 
 ### Spectral function and Greens function
 
 
 
-### Applying operators to arbitrary wave functions
+To generate the spectral function, define your resolution parameters,
+- artificial broadening ``\delta`` of the peaks,
+- set of ``\omega`` points at which spectral function should be calculated.
+For example:
+```Julia
+δ = 0.02
+ωRange = collect(-3:0.002:7)
+```
+Smaller values of ``\delta`` make peaks sharper. But to actually see the effect you need to set small enough step in ``\omega`` to resove it.
+Otherwise there will be too few points per peak to properly cover its shape. Step ``\delta / 5`` is usually small enough.
 
-## Custom operators
+If the operator you use takes arguments (i.e. it has some indices), define a set of arguments to iterate over. 
+For example, if you use ``\hat{S}_{k}^{+}``, define range of momenta ``k`` you want to evaluate.
+```Julia
+kRange = collect(0:system.size)
+```
+The actual values depend on how the operators arguments are defined. Each ``k`` in the above set corresponds to momentum `2πk / system.size`. See section [Operators](@ref) for more details.
+
+We can now specify dimensions for `spectrum` variable where we are going to store the specral function results. We fill it with zeros to make sure there are no undefined values in it.
+```Julia
+spectrum = zeros(Float64, length(ωRange), length(kRange))
+```
+
+Now we can calculate the spectral function. For that we call function [`run`](@ref Main.SpectralFunction.run) from `SpectralFunction` module and supply it with necessary arguments.
+```Julia
+for k in kRange
+    spectrum[:, k + 1] = Main.SpectralFunction.run(ωRange .+ E0, δ, system, ψ, operator, k)
+end
+```
+Above we shifted the set of energy points `ωRange` by the energy `E0` of the bare wave function `ψ` (this is optional, but usually that's what you want to do).
+The `operator` with argument `k` is applied to `ψ` internally. Proper interpratation of `ψ` (which is just a vector of complex numbers) is allowed by `system` argument.
+
+!!! tip
+    On HPC and for large systems, instead of a single loop, consider separate runs for different operator arguments (or subsets of those).
+    For example, you can run parallel calculations on separate nodes to obtain your results faster.
+
+
+## Operators
+
+### Applying operators to arbitrary wave functions
 
 - where to put new operators
 - operator function design
