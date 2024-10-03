@@ -13,7 +13,7 @@ function calculate()::Data
         α           = 1.0,      # XXZ anisotropy scaling 
         size        = 16,       # number of lattice sites
         electrons   = 16,       # number of electrons
-        spinsUp     = 8,        # number of spins up
+        spinsUp     = 0,        # number of spins up
         momentum    = 0         # internal momentum subspace
     )
     
@@ -30,7 +30,7 @@ function calculate()::Data
     operator = Main.Operators.Sk_plus
     
 # 4. Spectrum generation
-    iδ = 0.02im
+    δ = 0.02
     ωRange = collect(-3:0.002:7)
     kRange = collect(0:system.size)
     
@@ -38,7 +38,7 @@ function calculate()::Data
 
     # iterate over operator indices/args...
     for k in kRange
-        spectrum[:, k + 1] = Main.SpectralFunction.run(ωRange .+ E0, iδ, system, ψ, operator, k)
+        spectrum[:, k + 1] = Main.SpectralFunction.run(ωRange .+ E0, δ, system, ψ, operator, k)
     end
 
 # 5. Return whatever you need
