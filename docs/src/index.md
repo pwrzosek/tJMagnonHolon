@@ -4,10 +4,6 @@
 
 A set of modules for t-J model (related) Hamiltonians diagonalization and various spectral functions generation.
 
-!!! note
-    Please read through the [Manual](https://docs.julialang.org/en/v1/manual/getting-started/) section of the Julia documentation
-    if you're not familiar with Julia programming language.
-
 ## Features
 
 - Generate sparse matrix of t-J model Hamiltonian in magnon-holon basis.
