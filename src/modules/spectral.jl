@@ -17,7 +17,7 @@ struct Krylov
 end
 
 """
-    run(ωRange, δ, system, ψ, operator, args...; krylovDimension = 400) -> Vector{Float64}
+    run(ωRange, δ, system, ψ, operator, args...; krylovDimension = 400, returnGreensFunction = false) -> Union{Vector{Float64}, Vector{ComplexF64}}
 
 Apply `operator` with arguments `args...` to `system` wave function `ψ`. Then calculate spectral function over `ωRange` with artificial broadening `δ` using Lanczos tridiagonalization with initial state `Ô | ψ >`.
 Return Vector{Float64} of size `length(ωRange)` with calculated values of the spectral function. A keyword argument `krylovDimension` defines maximum dimension of Krylov subspace for Lanczoas tridiagonalization algorithm. Typically `krylovDimension` ∈ [100, 1000] gives best performance.

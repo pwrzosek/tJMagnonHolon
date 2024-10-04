@@ -140,7 +140,7 @@ function run(input::Union{Missing, System} = missing; eigsolve = true, howmany =
     end
 end
 
-"Check if system::System describes a valid system. Throw `error` if any input parameter was invalid, otherwise return `nothing`."
+"Check if `system::System` describes a valid system. Throw `error` if any input parameter was invalid, otherwise return `nothing`."
 function checkSystem(system::System)
     if (system.size < 2) || (system.size > 62) || isodd(system.size)
         error("`system size` must be even integer in range `[2, 62]`!")
