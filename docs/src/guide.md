@@ -3,10 +3,21 @@
 The purpose of this [Guide](@ref) is to provide a simple introduction to [tJMagnonHolon](@ref) features.
 It will allow you to start producing research relevant data right away.
 
+```@contents
+Pages = [
+    "guide.md"
+]
+Depth = 3
+```
+
 ## Introduction
 
 To start using [tJMagnonHolon](@ref) you need a distribution of Julia.
 You can download recent stable version from its official website [julialang.org](https://julialang.org).
+
+!!! note
+    Please read through the [Manual](https://docs.julialang.org/en/v1/manual/getting-started/) section of the Julia documentation
+    if you're not familiar with Julia programming language.
 
 Following packages are required for [tJMagnonHolon](@ref) code to work.
 ```
@@ -35,22 +46,18 @@ Let us start with the basics.
 
 ### Running the code
  
-- open terminal and move to `.../tJMagnonHolon/src/` directory.
-    - in terminal type `julia` to start julia process, then in Julia REPL type `include("run.jl")`.
-    - alternatively type `julia run.jl` (to run without graphical interface)
+Open terminal and move to the following directory.
+```
+.../tJMagnonHolon/src/
+``` 
+- in terminal type `julia` to start julia process, then in Julia REPL type `include("run.jl")`.
+- alternatively type `julia run.jl` (to run without graphical interface).
 
-
-File `run.jl` will execute `example_script.jl` from `.../tJMagnonHolon/src/scripts/` directory.
-You can add more scripts to `.../tJMagnonHolon/src/scripts/` (or to some other location). 
+This will execute `example_script.jl` from `.../tJMagnonHolon/src/scripts/` directory with all the [tJMagnonHolon](@ref) modules included.
+You can add more scripts to `.../tJMagnonHolon/src/scripts/` (or to any location of your choice). 
 To execute one or more of those scripts include them in `run.jl` file.
-For instance, to run `.../tJMagnonHolon/scripts/my_script.jl` add fillowing line to `run.jl`.
 ```Julia
 include("./scripts/my_script.jl")
-```
-
-If you don't want `example_script.jl` to be executed, remove or comment out from `run.jl` following line. 
-```Julia
-include("./scripts/example_script.jl")
 ```
 
 ### Basic structure
@@ -96,6 +103,8 @@ system = Main.tJmodel1D.System(
 )
 ```
 
+##### Hamiltonian
+
 The first four parameters ``\textcolor{orange}{t}, \textcolor{orange}{J}, \textcolor{orange}{\lambda}, \textcolor{orange}{\alpha}`` are parameters of the Hamiltonian ``\hat{H}`` (in magnon-holon basis).
 ```math
 \hat{H} = \hat{H}_t + \hat{H}_{xy} + \hat{H}_z
@@ -111,7 +120,7 @@ The first four parameters ``\textcolor{orange}{t}, \textcolor{orange}{J}, \textc
 ```
 
 The last four parameters ``\mathrm{\textcolor{orange}{size}, \textcolor{orange}{electrons}, \textcolor{orange}{spinsUp}, \textcolor{orange}{momentum}}`` are conserved by the Hamiltonian and point to a single subspace of the model (orthogonal to other subspaces).
-See section [Advanced] for detailed discussion.
+See section [Advanced](@ref) for detailed discussion.
 
 #### Other ways to define System
 
@@ -247,9 +256,15 @@ cr_down_dag(r::Int64; state::State, system::System)
 
 ### Spectral function and Greens function
 
+The signature feature of the [tJMagnonHolon](@ref) is the ability to calculate many Greens functions (and spectral functions) for the [Hamiltonian](@ref) ``\hat{H}``.
+In general, it evaluates expression of the following form.
+```math
+\langle \psi \vert \hat{O}_{I}^{\dag} \frac{1}{\omega - \hat{H} + i\delta} \hat{O}_{I} \vert \psi \rangle
+```
+Above, ``\psi`` is any wave function defined for a certain `system` subspace. Operator ``\hat{O}_{I}`` is any operator expressable in magnon-holon basis (i.e. with holon and magnon creation and annihilation operators).
+This operator can depend on any arbitrary ordered collection of indices ``I``. For example ``I=(k,q)`` might represent momenta of two particles introduced to the system. 
 
-
-To generate the spectral function, define your resolution parameters,
+To generate e.g. the spectral function, define your resolution parameters,
 - artificial broadening ``\delta`` of the peaks,
 - set of ``\omega`` points at which spectral function should be calculated.
 For example:
@@ -257,7 +272,7 @@ For example:
 δ = 0.02
 ωRange = collect(-3:0.002:7)
 ```
-Smaller values of ``\delta`` make peaks sharper. But to actually see the effect you need to set small enough step in ``\omega`` to resove it.
+Smaller values of ``\delta`` make peaks sharper. But to actually see the effect you need to set small enough step in ``\omega`` to resolve it.
 Otherwise there will be too few points per peak to properly cover its shape. Step ``\delta / 5`` is usually small enough.
 
 If the operator you use takes arguments (i.e. it has some indices), define a set of arguments to iterate over. 
@@ -278,15 +293,30 @@ for k in kRange
     spectrum[:, k + 1] = Main.SpectralFunction.run(ωRange .+ E0, δ, system, ψ, operator, k)
 end
 ```
-Above we shifted the set of energy points `ωRange` by the energy `E0` of the bare wave function `ψ` (this is optional, but usually that's what you want to do).
+Above we shifted the set of energy points `ωRange` by the energy `E0` of the bare wave function `ψ` for better alignment (the shift is optional).
 The `operator` with argument `k` is applied to `ψ` internally. Proper interpratation of `ψ` (which is just a vector of complex numbers) is allowed by `system` argument.
 
 !!! tip
     On HPC and for large systems, instead of a single loop, consider separate runs for different operator arguments (or subsets of those).
     For example, you can run parallel calculations on separate nodes to obtain your results faster.
 
+To recieve the Greens function instead, set keyword argument `returnGreensFunction` to `true`.
+```Julia
+spectrum[:, k + 1] = Main.SpectralFunction.run(ωRange .+ E0, δ, system, ψ, operator, k, returnGreensFunction = true)
+```
+But remember to accordingly adjust the type of values to store. Use complex numbers for a Greens function.
+```Julia
+spectrum = zeros(ComplexF64, length(ωRange), length(kRange))
+```
+
+Apart from spectrum resolution settings, one more parameter has an influence on the quality of generated results. It is the maximum depth of recursion in the used algorithm for
+Greens function generation. You can change this parameter by setting `krylovDimension` keyword argument. The default value is `krylovDimension = 400`.
+In general, values between 200 and 500 should be optimal for most calculations. You can set smaller values to speed up calculations for fast lookup, but the result will lose some of its details.
+Use larger `krylovDimension > 500` only if you need to zoom in on a small ``\omega`` window with relatively small broadening ``\delta``. 
 
 ## Operators
+
+
 
 ### Applying operators to arbitrary wave functions
 
