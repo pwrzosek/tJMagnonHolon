@@ -2,7 +2,7 @@
 
 *t-J model in magnon-holon basis.*
 
-A set of modules for t-J model (related) Hamiltonians diagonalization and various spectral functions generation.
+A set of modules for t-J model (related) Hamiltonians diagonalization and various Greens functions generation.
 
 ## Features
 
