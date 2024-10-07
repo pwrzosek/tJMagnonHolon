@@ -15,8 +15,8 @@ Depth = 3
 To start using [tJMagnonHolon](@ref) you need a distribution of Julia.
 You can download recent stable version from its official website [julialang.org](https://julialang.org).
 
-!!! note
-    Please read through the [Manual](https://docs.julialang.org/en/v1/manual/getting-started/) section of the Julia documentation
+!!! tip
+    Check out the [Manual](https://docs.julialang.org/en/v1/manual/getting-started/) section of the Julia documentation
     if you're not familiar with Julia programming language.
 
 Following packages are required for [tJMagnonHolon](@ref) code to work.
@@ -60,24 +60,26 @@ To execute one or more of those scripts include them in `run.jl` file.
 include("./scripts/my_script.jl")
 ```
 
-### Basic structure
+---
 
-Let us now discuss the features of the [tJMagnonHolon](@ref).
-Open `example_script.jl` on a side and compare how the features we are going to discuss are put together in a single script.
+Let us now learn about the features of the [tJMagnonHolon](@ref).
 
-!!! tip "[optional] Basic structure"
+!!! tip
+    Open `example_script.jl` on a side and compare how the discussed features are put together into a single script.
+
+!!! note "[optional] Basic structure"
     It is convenient to define output type for results we want to collect. Let us call it `Data`.
     ```Julia
     Data = OrderedDict{String, Union{Int64, Float64, Array{Float64}, Array{ComplexF64}}}
     ```
-    You can write your script in the main scope of Julia but wrapping your script in a function (or few functions) helps in organizing and reusing the code.
+    You can write your script in the main scope of Julia but wrapping it in a function (or few functions) helps in organizing and reusing the code.
     ```Julia
-    function calculate()::Data
+    function script()::Data
         ...
     end
     ```
-    Above defined function `calculate()` is supposed to return output of type `Data`.
-    You can also add some arguments to function `calculate()` or use different function name.
+    Above defined function `script()` is supposed to return output of type `Data`.
+    You can also add some arguments to function `script()` or use different function name.
 
 
 ### System definition
@@ -85,7 +87,7 @@ Open `example_script.jl` on a side and compare how the features we are going to 
 To perform any calculations we need to first define parameters of our system.
 All the system parameters are handled by [`System`](@ref Main.tJmodel1D.System) structure from `tJmodel1D` module.
 Let us use `system` for a corresponding variable name.
-There are multiple ways to define `system` but probably most readble is to use 
+There are multiple ways to define `system` but probably most readable is to use 
 [`System`](@ref Main.tJmodel1D.System(::Main.tJmodel1D.System)) 
 function and provide a set of keyword arguments as in example below. 
 The order in which keyword arguments are listed is not important.
@@ -154,7 +156,7 @@ Defined above `newSystem` has one electron less and one spin up less than `syste
 
 ### Model generation and factorization
 
-Once `system` is assigned you can call defined in `tJmodel1D` module function [`run`](@ref Main.tJmodel1D.run) to generate Hamiltonian matrix for subspace described by `system` and factorize it.
+Once `system` is known, you can call defined in `tJmodel1D` module function [`run`](@ref Main.tJmodel1D.run) to generate Hamiltonian matrix for subspace described by `system` and factorize it.
 ```Julia
 system, basis, model, factorization = Main.tJmodel1D.run(system)
 ```
@@ -174,6 +176,7 @@ This function returns 3 objects and a tuple:
 
 You can easily access calculated eigenvalues and eigenvectors. For example, the first value and its corresponding vector:
 ```Julia
+eigenvalues, eigenvectors, info = factorization
 ψ = eigenvectors[1]
 E0 = real(eigenvalues[1])
 ```
@@ -182,7 +185,7 @@ E0 = real(eigenvalues[1])
     Eigenvalues are sorted with respect to real part from smallest to largest.
 
 By default only 1 eigenvalue with smallest real part will be calculated. To calculate more eigenvalues use `howmany` keyword argument.
-For example, code below finds singlet and triplet energy of 2-site antiferromagnetic spin 1/2 Heisenberg chain for spin coupling J = 1.
+For example, code below finds singlet and triplet energy of 2-site antiferromagnetic spin 1/2 Heisenberg chain (periodic) for spin coupling J = 1.
 ```@example 2
 system = Main.tJmodel1D.System(J = 1.0, size = 2, electrons = 2, spinsUp = 1)
 system, basis, model, factorization = Main.tJmodel1D.run(system, howmany = 13) 
@@ -199,7 +202,7 @@ real.(eigenvalues)
     ```
     Norms of residuals close to zero indicate well converged values. 
 
-If you calculate only few eigenvalues, it is unlikely to happen, but in case you cannot converge desired number of eigenvalues, you may need to increase dimension of Krylov subspace.
+There should be no problems with convergence if you calculate just few eigenvalues. But in case you cannot converge desired number of eigenvalues, you may need to increase dimension of Krylov subspace.
 You can achieve this by setting keyword argument `kryldim` to value higher than 30 (which is default value).
 You can also set value smaller than 30 to save memory e.g. when looking for the lowest eigenvalue (and eigenvector) of a large system.
 Remember that `kryldim` cannot be smaller than `howmany`.
@@ -222,11 +225,11 @@ system, basis, model, factorization = Main.tJmodel1D.run(system, eigsolve = fals
     system, basis, model, _ = Main.tJmodel1D.run(system, eigsolve = false)
     ```
 
-### List of operators
+### Operators
 
 Operators are defined in module `Operators`. You can use any of the predefiend operators listed below.
-You can also add your own operators to `Operators` module.
-See section [Operators](@ref) to learn about operator functions design.
+
+#### List of operators
 
 - ``\hat{S}_{k}^{z}``, ``\hat{S}_{r}^{z}``, ``\hat{S}_{k}^{+}``, ``\hat{S}_{r}^{+}``, ``\hat{S}_{k}^{-}``, ``\hat{S}_{r}^{-}``
 ```Julia
@@ -254,25 +257,40 @@ ck_down_dag(k::Int64; state::State, system::System)
 cr_down_dag(r::Int64; state::State, system::System)
 ```
 
-### Spectral function and Greens function
+If you're interested in calculations of correlation functions (Greens / Spectral function), you can skip further subspections of [Operators](@ref) section and move straight to section [Correlation functions](@ref).
 
-The signature feature of the [tJMagnonHolon](@ref) is the ability to calculate many Greens functions (and spectral functions) for the [Hamiltonian](@ref) ``\hat{H}``.
-In general, it evaluates expression of the following form.
+#### Applying operators to wave-functions
+
+
+
+#### Custom Operators
+
+You can also add your own operators to `Operators` module.
+
+- where to put new operators
+- operator function design
+- send to advanced for maths
+
+
+### Correlation functions
+
+You can calculate Greens/correlation functions for the [Hamiltonian](@ref) ``\hat{H}`` with [tJMagnonHolon](@ref).
+The following formula shows what kind of expression can be evaluated.
 ```math
 \langle \psi \vert \hat{O}_{I}^{\dag} \frac{1}{\omega - \hat{H} + i\delta} \hat{O}_{I} \vert \psi \rangle
 ```
-Above, ``\psi`` is any wave function defined for a certain `system` subspace. Operator ``\hat{O}_{I}`` is any operator expressable in magnon-holon basis (i.e. with holon and magnon creation and annihilation operators).
+Above, ``\psi`` is any wave-function defined for a certain `system` subspace. Operator ``\hat{O}_{I}`` is any operator expressable in magnon-holon basis (i.e. with holon and magnon creation and annihilation operators).
 This operator can depend on any arbitrary ordered collection of indices ``I``. For example ``I=(k,q)`` might represent momenta of two particles introduced to the system. 
 
-To generate e.g. the spectral function, define your resolution parameters,
-- artificial broadening ``\delta`` of the peaks,
-- set of ``\omega`` points at which spectral function should be calculated.
+To generate a correlation function, define your resolution parameters,
+- artificial broadening ``\delta`` of the spectral features,
+- set of ``\omega`` points at which spectral features should be calculated.
 For example:
 ```Julia
 δ = 0.02
 ωRange = collect(-3:0.002:7)
 ```
-Smaller values of ``\delta`` make peaks sharper. But to actually see the effect you need to set small enough step in ``\omega`` to resolve it.
+Smaller values of ``\delta`` will make features sharper and thinner. Accordingly, you need to set small enough step in ``\omega`` to resolve them.
 Otherwise there will be too few points per peak to properly cover its shape. Step ``\delta / 5`` is usually small enough.
 
 If the operator you use takes arguments (i.e. it has some indices), define a set of arguments to iterate over. 
@@ -280,47 +298,31 @@ For example, if you use ``\hat{S}_{k}^{+}``, define range of momenta ``k`` you w
 ```Julia
 kRange = collect(0:system.size)
 ```
-The actual values depend on how the operators arguments are defined. Each ``k`` in the above set corresponds to momentum `2πk / system.size`. See section [Operators](@ref) for more details.
+The actual values of operators arguments depend on their definition in the code. Here each ``k`` in the above set corresponds to momentum `2πk / system.size`.
 
-We can now specify dimensions for `spectrum` variable where we are going to store the specral function results. We fill it with zeros to make sure there are no undefined values in it.
+We can now specify dimensions for `correlations` variable where we are going to store the results. We fill it with zeros to make sure there are no undefined values in it.
 ```Julia
-spectrum = zeros(Float64, length(ωRange), length(kRange))
+correlations = zeros(ComplexF64, length(ωRange), length(kRange))
 ```
 
-Now we can calculate the spectral function. For that we call function [`run`](@ref Main.SpectralFunction.run) from `SpectralFunction` module and supply it with necessary arguments.
+Now we can calculate the correlation function. For that we call function [`run`](@ref Main.Correlations.run) from `Correlations` module and supply it with necessary arguments.
 ```Julia
 for k in kRange
-    spectrum[:, k + 1] = Main.SpectralFunction.run(ωRange .+ E0, δ, system, ψ, operator, k)
+    correlations[:, k + 1] = Main.Correlations.run(ωRange .+ E0, δ, system, ψ, operator, k)
 end
 ```
-Above we shifted the set of energy points `ωRange` by the energy `E0` of the bare wave function `ψ` for better alignment (the shift is optional).
+Above we shifted the set of energy points `ωRange` by the energy `E0` of the bare wave-function `ψ` for better alignment (the shift is optional).
 The `operator` with argument `k` is applied to `ψ` internally. Proper interpratation of `ψ` (which is just a vector of complex numbers) is allowed by `system` argument.
 
 !!! tip
     On HPC and for large systems, instead of a single loop, consider separate runs for different operator arguments (or subsets of those).
     For example, you can run parallel calculations on separate nodes to obtain your results faster.
 
-To recieve the Greens function instead, set keyword argument `returnGreensFunction` to `true`.
-```Julia
-spectrum[:, k + 1] = Main.SpectralFunction.run(ωRange .+ E0, δ, system, ψ, operator, k, returnGreensFunction = true)
-```
-But remember to accordingly adjust the type of values to store. Use complex numbers for a Greens function.
-```Julia
-spectrum = zeros(ComplexF64, length(ωRange), length(kRange))
-```
-
 Apart from spectrum resolution settings, one more parameter has an influence on the quality of generated results. It is the maximum depth of recursion in the used algorithm for
-Greens function generation. You can change this parameter by setting `krylovDimension` keyword argument. The default value is `krylovDimension = 400`.
+Greens function generation. You can change this parameter by setting `kryldim` keyword argument. The default value is `kryldim = 400`.
 In general, values between 200 and 500 should be optimal for most calculations. You can set smaller values to speed up calculations for fast lookup, but the result will lose some of its details.
-Use larger `krylovDimension > 500` only if you need to zoom in on a small ``\omega`` window with relatively small broadening ``\delta``. 
-
-## Operators
-
-
-
-### Applying operators to arbitrary wave functions
-
-- where to put new operators
-- operator function design
-- send to advanced for maths
+Use larger `kryldim > 500` only if you need to zoom in on a small ``\omega`` window with relatively small broadening ``\delta``. 
+```Julia
+Main.Correlations.run(ωRange, δ, system, ψ, operator, operatorArgs..., kryldim = 100)
+```
 
