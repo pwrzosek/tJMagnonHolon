@@ -325,7 +325,7 @@ end
 """
     bitmov(s::Int, l::Int, f::Bool = false; hb::Int = 1 << (l - 1), hv::Int = (1 << l) - 1) -> Int
 
-Arithmetic bit shift for calculationg bit translations with periodic boundary conditions.
+Arithmetic bit shift for calculating bit translations with periodic boundary conditions.
 
 # Arguments
 *   `s::Int` - value which binary representation will be shifted

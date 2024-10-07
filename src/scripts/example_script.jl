@@ -1,10 +1,10 @@
-### --- Example script for spectral function calculation --- ### 
+### --- Example script for correlations calculation --- ### 
 
 using OrderedCollections
 
 Data = OrderedDict{String, Union{Int64, Float64, Array{Float64}, Array{ComplexF64}}}
 
-function calculate()::Data
+function script()::Data
 # 1. Define system    
     system = Main.tJmodel1D.System(
         t           = 1.0,      # hole hopping
@@ -28,33 +28,36 @@ function calculate()::Data
  
 # 3. Define operator
     operator = Main.Operators.Sk_plus
-    
-# 4. Spectrum generation
+     
+# 4. Generate Greens function
     δ = 0.02
     ωRange = collect(-3:0.002:7)
+
+    # arguments for operator
     kRange = collect(0:system.size)
     
-    spectrum = zeros(Float64, length(ωRange), length(kRange))
+    correlations = zeros(ComplexF64, length(ωRange), length(kRange))
 
     # iterate over operator indices/args...
     for k in kRange
-        spectrum[:, k + 1] = Main.SpectralFunction.run(ωRange .+ E0, δ, system, ψ, operator, k)
+        correlations[:, k + 1] = Main.Correlations.calculate(ωRange .+ E0, δ, system, ψ, operator, k)
     end
 
 # 5. Return whatever you need
     return Data(
+        "whatever"      => 7,
         "coupling"      => system.J,
         "interaction"   => system.λ,
         "size"          => system.size,
         "momentum"      => (2 / system.size) .* kRange, # momenta in units of π
         "energy"        => ωRange,
-        "spectrum"      => spectrum
+        "spectrum"      => -imag.(correlations) / pi # A(k, ω) = -1/π Im G(k, ω) 
     )
 end
 
 
 ### Run calculation (script above)
-data = calculate()
+data = script()
 
 
 ### Saving Spectrum Data

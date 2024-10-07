@@ -1,4 +1,4 @@
-module SpectralFunction
+module Correlations
 
 using OrderedCollections
 using LinearAlgebra
@@ -17,50 +17,42 @@ struct Krylov
 end
 
 """
-    run(ωRange, δ, system, ψ, operator, args...; krylovDimension = 400, returnGreensFunction = false) -> Union{Vector{Float64}, Vector{ComplexF64}}
+    calculate(ωRange, δ, system, ψ, operator, args...; kryldim = 400) -> Vector{ComplexF64}
 
-Apply `operator` with arguments `args...` to `system` wave function `ψ`. Then calculate spectral function over `ωRange` with artificial broadening `δ` using Lanczos tridiagonalization with initial state `Ô | ψ >`.
-Return Vector{Float64} of size `length(ωRange)` with calculated values of the spectral function. A keyword argument `krylovDimension` defines maximum dimension of Krylov subspace for Lanczoas tridiagonalization algorithm. Typically `krylovDimension` ∈ [100, 1000] gives best performance.
-Small values of `krylovDimension` speed up the calculation process but reduce the quality of spectral function. It is not advised to set Krylov dimension too high - performance eventually drops due to orthogonality loss.
-Return Greens function instead if keyword argument `returnGreensFunction` is set to `true`.
+Apply `operator` with arguments `args...` to `system` wave function `ψ`. Then calculate correlation function over `ωRange` with artificial broadening `δ` using Lanczos tridiagonalization with initial state `Ô | ψ >`.
+Return `Vector{ComplexF64}` of size `length(ωRange)` with calculated values of the correlation function. A keyword argument `kryldim` defines maximum dimension of Krylov subspace for Lanczoas tridiagonalization algorithm. Typically `kryldim` ∈ [100, 1000] gives best performance.
+Small values of `kryldim` speed up the calculation process but reduce the quality of results. It is not advised to set Krylov dimension too high - performance eventually drops due to orthogonality loss.
 """
-function run(ωRange, δ, system, ψ, operator, args...; krylovDimension = 400, returnGreensFunction::Bool = false)
+function calculate(ωRange, δ, system, ψ, operator, args...; kryldim = 400)
     println("Evaluating step for operator args: ", args...)    
-    spectrum = if returnGreensFunction
-        zeros(ComplexF64, length(ωRange))
-    else
-        zeros(Float64, length(ωRange))
-    end
+    result = zeros(ComplexF64, length(ωRange))
     
     println("> Applying operator to ψ...")    
     @time initialStateSystem = Main.Operators.applyOperator(system, ψ, operator, args...)
     
-    println("> Calculating spectral function...")    
+    println("> Calculating correlation function...")    
     @time for (system, initialState) in initialStateSystem
         basis = Main.tJmodel1D.makeBasis(system)
         model = Main.tJmodel1D.makeModel(basis, system)
 
-        spectrum += Main.SpectralFunction.calculate(ωRange, 1.0im * δ, initialState, model, krylovDimension, returnGreensFunction)
+        result += run(ωRange, 1.0im * abs(δ), initialState, model, kryldim)
     end
     println()
 
-    return spectrum
+    return result
 end
 
 
 """
-    calculate(ωRange::Vector{Float64}, iDelta::Complex{Float64}, initialState::Vector{Complex{Float64}}, model::Model, krylovDimension::Int64 = 400, returnGreensFunction = false)
+    run(ωRange::Vector{Float64}, iDelta::Complex{Float64}, initialState::Vector{Complex{Float64}}, model::Model, krylovDimension::Int64 = 400)
 
 Run Lanczos tridiagonalization of a subspace `model` starting from `initialState` including up to `krylovDimension` dimensions.
-Return spectral function calculated over range `ωRange` with data broadening `iDelta`.
+Return Greens function calculated over range `ωRange` with data broadening `iDelta`.
 """
-function calculate(ωRange::Vector{Float64}, iDelta::Complex{Float64}, initialState::Vector{Complex{Float64}}, model::Model, krylovDimension::Int64 = 400, returnGreensFunction::Bool = false)
+function run(ωRange::Vector{Float64}, iDelta::Complex{Float64}, initialState::Vector{Complex{Float64}}, model::Model, krylovDimension::Int64 = 400)
     krylov = Krylov(krylovDimension)
     diagonal, offDiagonal, size = calculateLanczos(initialState, model::Model, krylov::Krylov)
-    if returnGreensFunction 
-        return greensFunction(ωRange, iDelta, initialState, diagonal, offDiagonal, size)
-    end
-    return spectralFunction(ωRange, iDelta, initialState, diagonal, offDiagonal, size)
+    return greensFunction(ωRange, iDelta, initialState, diagonal, offDiagonal, size)
 end
 
 """
@@ -127,7 +119,7 @@ end
 """
     greensFunction(ωRange::Vector{Float64}, iDelta::Complex{Float64}, initialState::Vector{Complex{Float64}}, diagonal::Vector{Float64}, offDiagonal::Vector{Float64}, size::Int64) -> Vector{Complex{Float64}}
 
-Calculate Greens function over range of points `ωRange` applying data broadening `iDelta = iδ`.
+Calculate Greens function over range of points `ωRange` applying data broadening `iDelta`.
 """
 function greensFunction(ωRange::Vector{Float64}, iDelta::Complex{Float64}, initialState::Vector{Complex{Float64}}, diagonal::Vector{Float64}, offDiagonal::Vector{Float64}, size::Int64)::Vector{Complex{Float64}}
     result = Vector{ComplexF64}(undef, length(ωRange))
@@ -137,21 +129,6 @@ function greensFunction(ωRange::Vector{Float64}, iDelta::Complex{Float64}, init
     return result
 end
 
-"""
-    spectralFunction(ωRange::Vector{Float64}, iDelta::Complex{Float64}, initialState::Vector{Complex{Float64}}, diagonal::Vector{Float64}, offDiagonal::Vector{Float64}, size::Int64) -> Vector{Float64}
 
-Calculate spectral function over range of points `ωRange` applying data broadening `iDelta = iδ`.
-"""
-function spectralFunction(ωRange::Vector{Float64}, iDelta::Complex{Float64}, initialState::Vector{Complex{Float64}}, diagonal::Vector{Float64}, offDiagonal::Vector{Float64}, size::Int64)::Vector{Float64}
-    result = Vector{Float64}(undef, length(ωRange))
-    for (it, ω) in enumerate(ωRange)
-        result[it] = -imag(greensFunction(ω + iDelta, initialState, diagonal, offDiagonal, size)) / π
-    end
-    return result
-end
+end # module Correlations
 
-
-end
-
-
-### Q: Greens function templates?

@@ -7,7 +7,7 @@ using Main.tJmodel1D: System, Basis, State, makeBasis, getStateInfo
 """
     Superposition === OrderedDict{State, Complex{Float64}}
 
-Compact representation of wave function of single subspace. Alternative to sparse vector.
+Compact representation of wave function of a single subspace. Alternative to sparse vector.
 """
 Superposition = OrderedDict{State, Complex{Float64}}
 
@@ -973,7 +973,7 @@ end # cr_down_dag
 # ------------------------------------------------------------------------------------------ #
 
 ### ------------------------------- ###
-###     Custom operators - BEGIN    ###
+###     Custom Operators - BEGIN    ###
 ### ------------------------------- ###
 
 # ------------------------------------------------------------------------------------------ #
@@ -992,7 +992,7 @@ end # cr_down_dag
 
 
 ### ------------------------------- ###
-###     Custom operators - END      ###
+###     Custom Operators - END      ###
 ### ------------------------------- ###
 
 # ------------------------------------------------------------------------------------------ #

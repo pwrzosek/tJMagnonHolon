@@ -123,41 +123,34 @@ Modules = [Main.Operators]
 ```
 
 
-## Module SpectralFunction
+## Module Correlations
 
 ### Features
 
 ```@docs
-Main.SpectralFunction.run
-```
-
-!!! note "Returned type note"
-    Returned type of `Main.SpectralFunction.run` is `Vector{Float64}` for spectral function and `Vector{Complex{Float64}}` for Greens function calculation.
-
-```@docs
-Main.SpectralFunction.calculate
+Main.Correlations.calculate
 ```
 
 ```@docs
-Main.SpectralFunction.spectralFunction
+Main.Correlations.run
 ```
 
 ```@docs
-Main.SpectralFunction.greensFunction
+Main.Correlations.greensFunction
 ```
 
 ```@docs
-Main.SpectralFunction.calculateLanczos
+Main.Correlations.calculateLanczos
 ```
 
 ```@docs
-Main.SpectralFunction.Krylov
+Main.Correlations.Krylov
 ```
 
 ### Index
 ```@index
 Pages = ["documentation.md"]
-Modules = [Main.SpectralFunction]
+Modules = [Main.Correlations]
 ```
 
 

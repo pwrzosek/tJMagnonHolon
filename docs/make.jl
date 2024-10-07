@@ -4,11 +4,11 @@ using Documenter
 
 include("../src/modules/tJmodel1D.jl")
 include("../src/modules/operators.jl")
-include("../src/modules/spectral.jl")
+include("../src/modules/correlations.jl")
 include("../src/modules/utils.jl")
 
 makedocs(
-    modules = [Main.tJmodel1D, Main.Operators, Main.SpectralFunction, Main.Utils],
+    modules = [Main.tJmodel1D, Main.Operators, Main.Correlations, Main.Utils],
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true",
     ),

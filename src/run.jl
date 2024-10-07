@@ -1,6 +1,6 @@
 include("./modules/tJmodel1D.jl")
 include("./modules/operators.jl")
-include("./modules/spectral.jl")
+include("./modules/correlations.jl")
 include("./modules/utils.jl")
 
 ### May be needed on Windows systems due to a bug in libopenblas64_.dll
