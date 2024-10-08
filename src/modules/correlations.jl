@@ -7,11 +7,7 @@ using KrylovKit
 
 using Main.tJmodel1D: Model
 
-"""
-`struct Krylov` immutable structure for passing parameters to Krylov subspace methods.
-# Fields
-*   `dimension::Int64` - maximum dimension of Krylov subspace.
-"""
+"Immutable structure for passing parameters to Krylov subspace methods."
 struct Krylov
     dimension::Int64
 end
