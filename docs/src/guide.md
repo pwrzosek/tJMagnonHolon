@@ -257,20 +257,52 @@ ck_down_dag(k::Int64; state::State, system::System)
 cr_down_dag(r::Int64; state::State, system::System)
 ```
 
-If you're interested in calculations of correlation functions (Greens / Spectral function), you can skip further subspections of [Operators](@ref) section and move straight to section [Correlation functions](@ref).
+If you're interested in calculations of correlation functions (Greens / Spectral function), 
+you can skip further subsections of [Operators](@ref) section and move straight to section [Correlation functions](@ref).
 
 #### Applying operators to wave-functions
 
-
+For given wave-function ``\psi`` from `system` subspace and operator ``\hat{O}_I`` (where ``I`` - ordered collection of indices)
+the result of ``\hat{O}_I \vert \psi \rangle`` can be calculated with [`applyOperator`](@ref Main.Operators.applyOperator) function.
+For example, this is how to remove an electron with spin up and with momentum ``k = 0``,
+```Julia
+operator = Main.Operators.ck_up
+result = Main.Operators.applyOperator(system, ψ, operator, 0)
+```
+The first 3 arguments are always `system`, wave function `ψ` and `operator`. Futher arguments are considered `operator` indices and will be passed to the `operator` function. 
+It is important to remember that the above `result` may in general overlap with many different subspaces of the model.
+The `result` is a hash table with keys of type [`System`](@ref Main.tJmodel1D.System) describing the resulting subspaces and values of type `Vector{ComplexF64}` representing corresponding subspace wave-functions.
+```@example
+result = Main.Operators.SystemWaveFunction(Main.tJmodel1D.System() => [1.0im, 0.0]) # hide
+typeof(result) 
+```
+Once an operator is applied, one can for example calculate its expectation value on `ψ`.
+```Julia
+E = if haskey(result, system)
+    dot(ψ, result[system])
+else
+    0
+end
+```
 
 #### Custom Operators
 
-You can also add your own operators to `Operators` module.
+You can extend the original code base with your own operators. For this, you just have to put the operator function in the `Operators` module. 
+Every operator function follows the same design.
+```Julia
+function operator_name(args...; state::State, system::System)::SystemSuperposition
+    ...
+end
+```
+It takes any number of arguments `args...` interpreted as operator indices. The magnon-holon basis `state` and corresponding `system` are passed as keyword arguments.
+For each basis state, the number of terms produced by the action of the operator is proportional to the `system.size` rather than `length(basis)`. For this reason,
+the output type is a sparse representation of a wave-function that may overlap with more than one subspace of the model.
+```Julia
+SystemSuperposition = OrderedDict{System, Superposition}
+Superposition = OrderedDict{State, ComplexF64} # state is paired with its coefficient
+```
 
-- where to put new operators
-- operator function design
-- send to advanced for maths
-
+If you plan to add a custom operator, it may be useful to have a look at the operators derivations in the [Advanced](@ref) section. 
 
 ### Correlation functions
 
@@ -305,10 +337,10 @@ We can now specify dimensions for `correlations` variable where we are going to 
 correlations = zeros(ComplexF64, length(ωRange), length(kRange))
 ```
 
-Now we can calculate the correlation function. For that we call function [`run`](@ref Main.Correlations.run) from `Correlations` module and supply it with necessary arguments.
+Now we can calculate the correlation function. For that we call function [`calculate`](@ref Main.Correlations.calculate) from `Correlations` module and supply it with necessary arguments.
 ```Julia
 for k in kRange
-    correlations[:, k + 1] = Main.Correlations.run(ωRange .+ E0, δ, system, ψ, operator, k)
+    correlations[:, k + 1] = Main.Correlations.calculate(ωRange .+ E0, δ, system, ψ, operator, k)
 end
 ```
 Above we shifted the set of energy points `ωRange` by the energy `E0` of the bare wave-function `ψ` for better alignment (the shift is optional).
@@ -323,6 +355,6 @@ Greens function generation. You can change this parameter by setting `kryldim` k
 In general, values between 200 and 500 should be optimal for most calculations. You can set smaller values to speed up calculations for fast lookup, but the result will lose some of its details.
 Use larger `kryldim > 500` only if you need to zoom in on a small ``\omega`` window with relatively small broadening ``\delta``. 
 ```Julia
-Main.Correlations.run(ωRange, δ, system, ψ, operator, operatorArgs..., kryldim = 100)
+Main.Correlations.calculate(ωRange, δ, system, ψ, operator, operatorArgs..., kryldim = 100)
 ```
 
