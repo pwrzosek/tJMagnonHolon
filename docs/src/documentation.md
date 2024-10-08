@@ -4,11 +4,6 @@ This page contains a complete documentation of implemented types and functions.
 Each module has its own separate section for easier navigation.
 Each module section ends with table of contents for that module listed in alphabetical order. 
 
-## Outline
-```@contents
-Pages = ["documentation.md"]
-Depth = 2
-```
 
 ## Module tJmodel1D
 
