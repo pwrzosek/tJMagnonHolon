@@ -112,10 +112,10 @@ The first four parameters ``\textcolor{orange}{t}, \textcolor{orange}{J}, \textc
 \hat{H} = \hat{H}_t + \hat{H}_{xy} + \hat{H}_z
 ```
 ```math
-\hat{H}_t = \textcolor{orange}{t}\sum_{\langle i,j \rangle} \hat{P}_i \hat{h}_i^\dag \hat{h}_j \left( \hat{a}_i + \hat{a}_j^\dag \right) \hat{P}_j + \textrm{H.c.}
+\hat{H}_t = \textcolor{orange}{t}\sum_{\langle i,j \rangle} \hat{h}_i^\dag \hat{h}_j \left( \hat{a}_i + \hat{a}_j^\dag \right) + \textrm{H.c.}
 ```
 ```math
-\hat{H}_{xy} = \frac{\textcolor{orange}{\alpha} \textcolor{orange}{J}}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left(\hat{P}_i \hat{P}_j \hat{a}_i \hat{a}_j + \mathrm{H.c} \right) \hat{h}_j \hat{h}_j^\dag
+\hat{H}_{xy} = \frac{\textcolor{orange}{\alpha} \textcolor{orange}{J}}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left( \hat{a}_i \hat{a}_j + \hat{a}_i^\dag \hat{a}_j^\dag \right) \hat{h}_j \hat{h}_j^\dag
 ```
 ```math
 \hat{H}_{z} = \frac{\textcolor{orange}{J}}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left(\hat{a}_i^\dag \hat{a}_i + \hat{a}_j^\dag \hat{a}_j - 2 \textcolor{orange}{\lambda} \hat{a}_i^\dag \hat{a}_i \hat{a}_j^\dag \hat{a}_j - 1 \right) \hat{h}_j \hat{h}_j^\dag
