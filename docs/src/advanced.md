@@ -20,8 +20,8 @@ of the standard operators in the [tJMagnonHolon](@ref). We assume the system is 
 On sublattice A (sites with even indices ``\{0, 2, 4, ..., L - 2\}``):
 ```math
 \begin{aligned}
-	\hat{\tilde{c}}_{i\uparrow}^\dag &= \hat{h}_i, &\quad \hat{\tilde{c}}_{i\uparrow} &= \hat{h}_i^\dag, \\
-	\hat{\tilde{c}}_{i\downarrow}^\dag &= \hat{a}_i^\dag \hat{h}_i, &\quad \hat{\tilde{c}}_{i\downarrow} &= \hat{h}_i^\dag \hat{a}_i, \\
+	\hat{\tilde{c}}_{i\uparrow}^\dag &= \hat{P}_i \hat{h}_i, &\quad \hat{\tilde{c}}_{i\uparrow} &= \hat{h}_i^\dag \hat{P}_i, \\
+	\hat{\tilde{c}}_{i\downarrow}^\dag &= \hat{a}_i^\dag \hat{P}_i \hat{h}_i, &\quad \hat{\tilde{c}}_{i\downarrow} &= \hat{h}_i^\dag \hat{P}_i \hat{a}_i, \\
     \hat{S}_i^+ &= \hat{h}_i \hat{h}_i^\dag \hat{a}_i, &\quad \hat{S}_i^z &= \left(\frac{1}{2} - \hat{a}_i^\dag \hat{a}_i \right) \hat{h}_i \hat{h}_i^\dag, \\
     \hat{S}_i^- &= \hat{a}_i^\dag \hat{h}_i \hat{h}_i^\dag, &\quad \hat{\tilde{n}}_i &= 1 - \hat{h}_i^\dag \hat{h}_i = \hat{h}_i \hat{h}_i^\dag.
 \end{aligned}
@@ -30,12 +30,14 @@ On sublattice A (sites with even indices ``\{0, 2, 4, ..., L - 2\}``):
 On sublattice B (sites with odd indices ``\{1, 2, 5, ..., L - 1\}``):
 ```math
 \begin{aligned}
-	\hat{\tilde{c}}_{i\uparrow}^\dag &= \hat{a}_i^\dag \hat{h}_i, &\quad \hat{\tilde{c}}_{i\uparrow} &= \hat{h}_i^\dag \hat{a}_i, \\
-	\hat{\tilde{c}}_{i\downarrow}^\dag &= \hat{h}_i, &\quad \hat{\tilde{c}}_{i\downarrow} &= \hat{h}_i^\dag, \\
+	\hat{\tilde{c}}_{i\uparrow}^\dag &= \hat{a}_i^\dag \hat{P}_i \hat{h}_i, &\quad \hat{\tilde{c}}_{i\uparrow} &= \hat{h}_i^\dag \hat{P}_i \hat{a}_i, \\
+	\hat{\tilde{c}}_{i\downarrow}^\dag &= \hat{P}_i \hat{h}_i, &\quad \hat{\tilde{c}}_{i\downarrow} &= \hat{h}_i^\dag \hat{P}_i, \\
     \hat{S}_i^+ &= \hat{a}_i^\dag \hat{h}_i \hat{h}_i^\dag, &\quad \hat{S}_i^z &= \left(\hat{a}_i^\dag \hat{a}_i - \frac{1}{2}\right) \hat{h}_i \hat{h}_i^\dag, \\
     \hat{S}_i^- &= \hat{h}_i \hat{h}_i^\dag \hat{a}_i, &\quad \hat{\tilde{n}}_i &= 1 - \hat{h}_i^\dag \hat{h}_i = \hat{h}_i \hat{h}_i^\dag.
 \end{aligned}
 ```
+
+On both sublattices, ``\hat{P}_i = 1 - \hat{a}_i^\dag \hat{a}_i``.
 
 ---
 
@@ -49,7 +51,7 @@ and rewrite it to magnon-holon basis,
 \hat{H} = \hat{H}_t + \hat{H}_{J},
 ```
 ```math
-\hat{H}_t = t \sum_{\langle i,j \rangle} \hat{h}_i^\dag \hat{h}_j \left( \hat{a}_i + \hat{a}_j^\dag \right) + \textrm{H.c.},
+\hat{H}_t = t \sum_{\langle i,j \rangle} \hat{P}_i \left( \hat{h}_i^\dag \hat{h}_j \hat{a}_i + \hat{h}_i^\dag \hat{h}_j \hat{a}_j^\dag \right) \hat{P}_j + \textrm{H.c.},
 ```
 ```math
 \hat{H}_{J} = \frac{J}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left( \hat{a}_i \hat{a}_j + \hat{a}_i^\dag \hat{a}_j^\dag 
@@ -64,7 +66,7 @@ We extend the above model by introducing two additional components:
 \hat{H} = \hat{H}_t + \hat{H}_{xy} + \hat{H}_z
 ```
 ```math
-\hat{H}_t = t \sum_{\langle i,j \rangle} \hat{h}_i^\dag \hat{h}_j \left( \hat{a}_i + \hat{a}_j^\dag \right) + \textrm{H.c.}
+\hat{H}_t = t \sum_{\langle i,j \rangle} \hat{P}_i \left( \hat{h}_i^\dag \hat{h}_j \hat{a}_i + \hat{h}_i^\dag \hat{h}_j \hat{a}_j^\dag \right) \hat{P}_j + \textrm{H.c.},
 ```
 ```math
 \hat{H}_{xy} = \frac{\textcolor{orange}{\alpha} J}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left( \hat{a}_i \hat{a}_j + \hat{a}_i^\dag \hat{a}_j^\dag \right) \hat{h}_j \hat{h}_j^\dag
@@ -266,14 +268,13 @@ Let us now work out the ladder oparator ``\hat{S}^+_k``. Compared to the previou
 &+ \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r [\beta^+_R(\tilde{s}) \vert \tilde{s}^+_R \rangle + \beta^-_R(\tilde{s}) \vert \tilde{s}^-_R \rangle] \\
 &= \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{\tilde{s}^+_R}} \exp(-ikR) [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] \vert \tilde{s}^+_R (p - 2k) \rangle \\
 &+ \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{\tilde{s}^-_R}} \exp(-ikR) [\alpha^-_R(\tilde{s}) + \beta^-_R(\tilde{s})] \vert \tilde{s}^-_R (p - 2k) \rangle \\
-&= \sum_{R=0}^{L-1} \sqrt{\frac{N_{\tilde{s}^+_R}}{L N_s}} \exp(-ikR) [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] \vert \tilde{s}^+_R (p - 2k) \rangle,
 \end{aligned}
 ```
 with ``\frac{1}{2}(\hat{a}_{R} + \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle = [\alpha^+_R(\tilde{s}) \vert \tilde{s}^+_R \rangle + \alpha^-_R(\tilde{s}) \vert \tilde{s}^-_R \rangle]``
 and ``\frac{(-1)^R}{2}(\hat{a}_{R} - \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle = [\beta^+_R(\tilde{s}) \vert \tilde{s}^+_R \rangle + \beta^-_R(\tilde{s}) \vert \tilde{s}^-_R \rangle]``,
 where ``\vert \tilde{s}^{\pm}_R \rangle \equiv \vert \tilde{s}^{\pm}_R, L, N_e, n_\uparrow \pm 1 \rangle`` comes from flipping a spin at site ``R`` in state ``\vert \tilde{s} \rangle``. 
 The normalization factors ``\sqrt{N_{\tilde{s}^{\pm}_R}}`` appear since new states ``\vert \tilde{s}^{\pm}_R \rangle`` may in general have periodicity different than ``\vert \tilde{s} \rangle``.
-Of course, ``\beta^-_R(\tilde{s}) = -\alpha^-_R(\tilde{s})`` meaning that we can only increase the number of spins up (this justifies the last equation). On the other hand,
+Of course, ``\beta^-_R(\tilde{s}) = -\alpha^-_R(\tilde{s})`` meaning that we can only increase the number of spins up (as expected from ``\hat{S}^+_k``). On the other hand,
 ``\beta^+_R(\tilde{s}) = \alpha^+_R(\tilde{s})`` with ``\alpha^+_R(\tilde{s})`` equal to ``0`` when ``R`` is occupied by a hole or otherwise it is given according to the table below.
 
 | ``R`` in sublattice | magnons at ``R`` in ``\vert \tilde{s} \rangle`` | ``\alpha^+_R(\tilde{s})`` |
