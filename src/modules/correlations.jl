@@ -20,7 +20,7 @@ Return `Vector{ComplexF64}` of size `length(ωRange)` with calculated values of 
 Small values of `kryldim` speed up the calculation process but reduce the quality of results. It is not advised to set Krylov dimension too high - performance eventually drops due to orthogonality loss.
 """
 function calculate(ωRange, δ, system, ψ, operator, args...; kryldim = 400)
-    println("Evaluating step for operator args: ", args...)    
+    println("Evaluating step for operator args: ", join(args, ", "))    
     result = zeros(ComplexF64, length(ωRange))
     
     println("> Applying operator to ψ...")    
