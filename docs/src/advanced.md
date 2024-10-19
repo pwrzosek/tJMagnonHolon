@@ -5,7 +5,7 @@ We will cover here details of the transformation to magnon-holon basis, includin
 - sublattice-wise transformation of standard operators,
 - standard ``t``-``J`` Hamiltonian, its magnon-holon representation and generalization to ``t``-``J_{xy}``-``J_{z}(\lambda)`` model,
 - quantities preserved by the generalized Hamiltonian and commutation relation with translation operator,
-- definition and numerical representation of momentum states and representative states in mangon-holon basis,
+- definition and numerical representation of momentum states and representative states in magnon-holon basis,
 - example derivations for operators action on magnon-holon representative basis states.
 
 ---
@@ -264,16 +264,20 @@ Let us now work out the ladder oparator ``\hat{S}^+_k``. Compared to the previou
 &= \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r \left( \frac{1+(-1)^R}{2} \hat{a}_{R} + \frac{1-(-1)^R}{2} \hat{a}^{\dag}_{R} \right) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle \\
 &= \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r \frac{1}{2}(\hat{a}_{R} + \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle \\
 &+ \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r \frac{(-1)^R}{2}(\hat{a}_{R} - \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle \\
-&= \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r [\alpha^+_R(\tilde{s}) \vert \tilde{s}^+_R \rangle + \alpha^-_R(\tilde{s}) \vert \tilde{s}^-_R \rangle] \\
-&+ \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r [\beta^+_R(\tilde{s}) \vert \tilde{s}^+_R \rangle + \beta^-_R(\tilde{s}) \vert \tilde{s}^-_R \rangle] \\
-&= \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{\tilde{s}^+_R}} \exp(-ikR) [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] \vert \tilde{s}^+_R (p - 2k) \rangle \\
-&+ \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{\tilde{s}^-_R}} \exp(-ikR) [\alpha^-_R(\tilde{s}) + \beta^-_R(\tilde{s})] \vert \tilde{s}^-_R (p - 2k) \rangle \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r [\alpha^+_R(\tilde{s}) \vert s^+_R \rangle + \alpha^-_R(\tilde{s}) \vert s^-_R \rangle] \\
+&+ \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r [\beta^+_R(\tilde{s}) \vert s^+_R \rangle + \beta^-_R(\tilde{s}) \vert s^-_R \rangle] \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{s^+_R}} \exp(-ikR) [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] \vert s^+_R (p - 2k) \rangle \\
+&+ \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{s^-_R}} \exp(-ikR) [\alpha^-_R(\tilde{s}) + \beta^-_R(\tilde{s})] \vert s^-_R (p - 2k) \rangle \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{s^+_R}} \exp[-ikR -i(p-2k)d_{s^+_R}] [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] \vert \tilde{s}^+_R (p - 2k) \rangle \\
+&+ \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{s^-_R}} \exp[-ikR -i(p-2k)d_{s^-_R}] [\alpha^-_R(\tilde{s}) + \beta^-_R(\tilde{s})] \vert \tilde{s}^-_R (p - 2k) \rangle,
 \end{aligned}
 ```
-with ``\frac{1}{2}(\hat{a}_{R} + \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle = [\alpha^+_R(\tilde{s}) \vert \tilde{s}^+_R \rangle + \alpha^-_R(\tilde{s}) \vert \tilde{s}^-_R \rangle]``
-and ``\frac{(-1)^R}{2}(\hat{a}_{R} - \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle = [\beta^+_R(\tilde{s}) \vert \tilde{s}^+_R \rangle + \beta^-_R(\tilde{s}) \vert \tilde{s}^-_R \rangle]``,
-where ``\vert \tilde{s}^{\pm}_R \rangle \equiv \vert \tilde{s}^{\pm}_R, L, N_e, n_\uparrow \pm 1 \rangle`` comes from flipping a spin at site ``R`` in state ``\vert \tilde{s} \rangle``. 
-The normalization factors ``\sqrt{N_{\tilde{s}^{\pm}_R}}`` appear since new states ``\vert \tilde{s}^{\pm}_R \rangle`` may in general have periodicity different than ``\vert \tilde{s} \rangle``.
+with ``\frac{1}{2}(\hat{a}_{R} + \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle = [\alpha^+_R(\tilde{s}) \vert s^+_R \rangle + \alpha^-_R(\tilde{s}) \vert s^-_R \rangle]``
+and ``\frac{(-1)^R}{2}(\hat{a}_{R} - \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle = [\beta^+_R(\tilde{s}) \vert s^+_R \rangle + \beta^-_R(\tilde{s}) \vert s^-_R \rangle]``,
+where ``\vert s^{\pm}_R \rangle \equiv \vert s^{\pm}_R, L, N_e, n_\uparrow \pm 1 \rangle`` comes from flipping a spin at site ``R`` in state ``\vert \tilde{s} \rangle``. 
+The normalization factors ``\sqrt{N_{s^{\pm}_R}}`` appear since new states ``\vert s^{\pm}_R \rangle`` may in general have periodicity different than ``\vert \tilde{s} \rangle``. 
+These states may also not be representative states, so we need to find their representatives ``\vert \tilde{s}^{\pm}_R \rangle`` and include proper phase shifts,
+as determined by the distance ``d_{s^{\pm}_R}`` to the representative.
 Of course, ``\beta^-_R(\tilde{s}) = -\alpha^-_R(\tilde{s})`` meaning that we can only increase the number of spins up (as expected from ``\hat{S}^+_k``). On the other hand,
 ``\beta^+_R(\tilde{s}) = \alpha^+_R(\tilde{s})`` with ``\alpha^+_R(\tilde{s})`` equal to ``0`` when ``R`` is occupied by a hole or otherwise it is given according to the table below.
 
@@ -284,7 +288,7 @@ Of course, ``\beta^-_R(\tilde{s}) = -\alpha^-_R(\tilde{s})`` meaning that we can
 | ``R \in A``         | ``1``                                           | ``\frac{1}{2}``           |
 | ``R \in B``         | ``1``                                           | ``0``                     |
 
-From the above considerations, we see that the code for this operator shall first check if the value of ``\alpha^+_R(\tilde{s})`` is nonzero and only proceed if that's the case.
+From the above considerations, we see that the code for this operator shall first check if the value of ``\alpha^+_R(\tilde{s})`` is non-zero and only proceed if that's the case.
 Then the operators action on state ``\vert \tilde{s} \rangle`` simply alternates the ``R``-th bit of `magnons` variable, which equates to XORing `magnons` with ``2^R``.
 
 As one can expect, derivation for ``\hat{S}^-_k`` is analogical, with the same result form and following relations between coefficients,
@@ -292,3 +296,25 @@ As one can expect, derivation for ``\hat{S}^-_k`` is analogical, with the same r
 \alpha^-_R(\tilde{s}) = \beta^-_R(\tilde{s}) = \frac{1}{2} - \alpha^+_R(\tilde{s}), \\
 \beta^+_R(\tilde{s}) = -\alpha^+_R(\tilde{s}).
 ```
+Also, ``\hat{S}^{\pm}_r`` can be obtained the same way as ``\hat{S}^z_r``.
+
+Creation and annihilation operators for electrons follow the same scheme as spin ladder operators. For example,
+```math
+\begin{aligned}
+\hat{\tilde{c}}_{k\downarrow} \vert \tilde{s}(p) \rangle &= \frac{1}{\sqrt{N_s}} \sum_{r=0}^{N-1} \exp(-ipr) \hat{\tilde{c}}_{k\downarrow} \hat{D}^r \vert \tilde{s} \rangle = \frac{1}{\sqrt{L N_s}} \sum_{r=0}^{N-1} \sum_{r'=0}^{L-1} \exp(-ipr - ikr') \hat{\tilde{c}}_{r'\downarrow} \hat{D}^r \vert \tilde{s} \rangle \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{r,r'} \exp(-ipr -ikr') (\delta_{r' \in A} \hat{h}^{\dag}_{r'} \hat{P}_{r'} \hat{a}_{r'} + \delta_{r' \in B} \hat{h}^{\dag}_{r'} \hat{P}_{r'}) \hat{D}^r \vert \tilde{s} \rangle \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{r,r'} \exp(-ipr -ikr') \hat{D}^r (\delta_{r' \in A} \hat{h}^{\dag}_{2r + r'} \hat{P}_{2r + r'} \hat{a}_{2r + r'} + \delta_{r' \in B} \hat{h}^{\dag}_{2r + r'} \hat{P}_{2r + r'}) \vert \tilde{s} \rangle \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p - 2k)r -ikR] \hat{D}^r (\delta_{R-2r \in A} \hat{h}^{\dag}_{R} \hat{P}_{R} \hat{a}_{R} + \delta_{R-2r \in B} \hat{h}^{\dag}_{R} \hat{P}_{R}) \vert \tilde{s} \rangle \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p - 2k)r -ikR] \hat{D}^r \frac{1}{2} \hat{h}^{\dag}_{R} \hat{P}_{R} [\hat{a}_{R} + 1 + (-1)^R (\hat{a}_{R} - 1)] \vert \tilde{s} \rangle \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r [\alpha^+_R(\tilde{s}) \vert s^+_R \rangle + \alpha^-_R(\tilde{s}) \vert s^-_R \rangle] \\
+&+ \frac{1}{\sqrt{L N_s}} \sum_{r,R} \exp[-i(p-2k)r -ikR] \hat{D}^r [\beta^+_R(\tilde{s}) \vert s^+_R \rangle + \beta^-_R(\tilde{s}) \vert s^-_R \rangle] \\
+&= \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{s^+_R}} \exp[-ikR -i(p-2k)d_{s^+_R}] [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] \vert \tilde{s}^+_R (p - 2k) \rangle \\
+&+ \frac{1}{\sqrt{L N_s}} \sum_{R} \sqrt{N_{s^-_R}} \exp[-ikR -i(p-2k)d_{s^-_R}] [\alpha^-_R(\tilde{s}) + \beta^-_R(\tilde{s})] \vert \tilde{s}^-_R (p - 2k) \rangle.
+\end{aligned}
+```
+where the hole is added at site R in state ``\vert s^{\pm}_R \rangle`` resulting in the increased(+)/decreased(-) magnetization with respect to ``\vert \tilde{s} \rangle``. 
+The only non-zero contributions come from sites not occupied by the holes. Of course, even then the terms for decreased magnetization state must vanish, and indeed we have
+``\beta^-_R(\tilde{s}) = -\alpha^-_R(\tilde{s})``. In general, the coefficients in the above result follow the same relations as for ``\hat{S}^+_k``. On the other hand,
+for creation operator ``\hat{\tilde{c}}^{\dag}_{k\downarrow}``, only sites occupied by a hole give contribution. Then we are guaranteed that there are no magnons and in such case,
+``\beta^+_R(\tilde{s}) = -\alpha^+_R(\tilde{s})`` and simply ``\beta^-_R(\tilde{s}) = \alpha^-_R(\tilde{s}) = \frac{1}{2}``.
+
