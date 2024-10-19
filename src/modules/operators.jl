@@ -54,13 +54,6 @@ function applyOperator(system::System, waveFunction::Vector{Complex{Float64}}, o
 end
 
 
-# ------------------------------------------------------------------------------------------ #
-
-### ----------------------------------- ###
-###     Standard Operators - BEGIN      ###
-### ----------------------------------- ###
-
-
 function Sk_z(k::Int64; state::State, system::System)::SystemSuperposition
     result = SystemSuperposition()
     
@@ -735,7 +728,7 @@ function ck_up_dag(k::Int64; state::State, system::System)::SystemSuperposition
     for R in 0:(system.size-1)
         alpha = 0
         if state.charges & siteValue == 0
-            # anihilating a hole
+            # annihilating a hole
             newState = State(state.charges | siteValue, state.magnons)
             
             # creating a magnon if on sublattice B
@@ -797,7 +790,7 @@ function cr_up_dag(r::Int64; state::State, system::System)::SystemSuperposition
         for R in 0:(system.size-1)
             alpha = 0
             if state.charges & siteValue == 0
-                # anihilating a hole
+                # annihilating a hole
                 newState = State(state.charges | siteValue, state.magnons)
                 
                 # creating a magnon if on sublattice B
@@ -860,7 +853,7 @@ function ck_down_dag(k::Int64; state::State, system::System)::SystemSuperpositio
     for R in 0:(system.size-1)
         alpha = 0
         if state.charges & siteValue == 0
-            # anihilating a hole
+            # annihilating a hole
             newState = State(state.charges | siteValue, state.magnons)
             
             # creating a magnon if on sublattice A
@@ -923,7 +916,7 @@ function cr_down_dag(r::Int64; state::State, system::System)::SystemSuperpositio
         for R in 0:(system.size-1)
             alpha = 0
             if state.charges & siteValue == 0
-                # anihilating a hole
+                # annihilating a hole
                 newState = State(state.charges | siteValue, state.magnons)
                 
                 # creating a magnon if on sublattice A
@@ -966,35 +959,8 @@ function cr_down_dag(r::Int64; state::State, system::System)::SystemSuperpositio
 end # cr_down_dag
 
 
-### ------------------------------- ###
-###     Standard Operators - END    ###
-### ------------------------------- ###
+### custom operators
+include("custom.jl")
 
-# ------------------------------------------------------------------------------------------ #
-
-### ------------------------------- ###
-###     Custom Operators - BEGIN    ###
-### ------------------------------- ###
-
-# ------------------------------------------------------------------------------------------ #
-#   Required Structure:                                                                      #
-#       function operator_name(args...; state::State, system::System)::SystemSuperposition   #
-#                              ^      ^--- required to split args... from kwargs...          #
-#                              ^--- put as many arguments as you want (e.g. momentum k)      #
-#                                                                                            #
-#   Assumptions:                                                                             #
-#       state::State ∈ Main.tJmodel1D.makeBasis(system::System)::Basis                       #
-#       ^--- state::State is a single basis state from subspace defined by system::System    #
-# ------------------------------------------------------------------------------------------ #
-
-
-# ----->  Add your custom operators here  <-----
-
-
-### ------------------------------- ###
-###     Custom Operators - END      ###
-### ------------------------------- ###
-
-# ------------------------------------------------------------------------------------------ #
 
 end # module Operators
