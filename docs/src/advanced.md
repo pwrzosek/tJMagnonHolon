@@ -318,3 +318,20 @@ The only non-zero contributions come from sites not occupied by the holes. Of co
 for creation operator ``\hat{\tilde{c}}^{\dag}_{k\downarrow}``, only sites occupied by a hole give contribution. Then we are guaranteed that there are no magnons and in such case,
 ``\beta^+_R(\tilde{s}) = -\alpha^+_R(\tilde{s})`` and simply ``\beta^-_R(\tilde{s}) = \alpha^-_R(\tilde{s}) = \frac{1}{2}``.
 
+In the end, let us discuss operators with more than one index. Such operators may appear when calculating n-particle correlation functions.
+For example, let ``\hat{O}_{k,q} = \hat{\tilde{c}}_{k\uparrow}\hat{\tilde{c}}_{q\downarrow}``. Applying previous results, we obtain,
+```math
+\begin{aligned}
+\hat{O}_{k,q} \vert \tilde{s}(p) \rangle &= \hat{\tilde{c}}_{k\uparrow} \sum_{R} \sqrt{\frac{N_{s^+_R}}{L N_s}} \exp[-iqR -i(p-2q)d_{s^+_R}] [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] \vert \tilde{s}^+_R (p - 2q) \rangle \\
+&= \sum_{R,R'} \sqrt{\frac{N_{s^{+-}_{R,R'}}}{L N_s}} \exp[-iqR -i(p-2q)d_{s^+_R}] \exp[-ikR' -i(p-2q-2k)d_{s^{+-}_{R,R'}}] \times \\
+&\times [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] [\alpha^-_{R'}(\tilde{s}^+_R) + \beta^-_{R'}(\tilde{s}^+_R)] \vert \tilde{s}^{+-}_{R,R'} (p - 2q - 2k) \rangle.
+\end{aligned}
+```
+It is important to mention that periodicity-momentum correspondence has to be checked for all the intermediate states, not only for the final state.
+This means that the sum over ``R'`` only makes sense if state ``\vert \tilde{s}^+_R \rangle`` is compatibile with momentum ``p-2q``. Otherwise, one may introduce
+false non-zero contributions to the final result. Other than that, there are no suprises compared to previous examples. 
+
+This summarizes our derivations. If you plan to introduce your own custom operators, read through [Custom Operators](@ref) subsection of the [Guide](@ref). 
+You will learn there how the opreators functions are desined in [tJMagnonHolon](@ref). Then you may want to compare presented here derivations,
+with corresponding operators functions in the `operators.jl` file in `.../tJMagnonHolon/src/modules/`.
+
