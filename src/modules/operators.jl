@@ -960,7 +960,7 @@ end # cr_down_dag
 
 
 ### custom operators
-include("custom.jl")
+include("./mods/custom.jl")
 
 
 end # module Operators
