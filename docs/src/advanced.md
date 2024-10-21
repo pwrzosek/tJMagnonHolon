@@ -323,7 +323,7 @@ For example, let ``\hat{O}_{k,q} = \hat{\tilde{c}}_{k\uparrow}\hat{\tilde{c}}_{q
 ```math
 \begin{aligned}
 \hat{O}_{k,q} \vert \tilde{s}(p) \rangle &= \hat{\tilde{c}}_{k\uparrow} \sum_{R} \sqrt{\frac{N_{s^+_R}}{L N_s}} \exp[-iqR -i(p-2q)d_{s^+_R}] [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] \vert \tilde{s}^+_R (p - 2q) \rangle \\
-&= \sum_{R,R'} \sqrt{\frac{N_{s^{+-}_{R,R'}}}{L N_s}} \exp[-iqR -i(p-2q)d_{s^+_R}] \exp[-ikR' -i(p-2q-2k)d_{s^{+-}_{R,R'}}] \times \\
+&= \sum_{R,R'} \sqrt{\frac{N_{s^{+-}_{R,R'}}}{L^2 N_s}} \exp[-iqR -i(p-2q)d_{s^+_R}] \exp[-ikR' -i(p-2q-2k)d_{s^{+-}_{R,R'}}] \times \\
 &\times [\alpha^+_R(\tilde{s}) + \beta^+_R(\tilde{s})] [\alpha^-_{R'}(\tilde{s}^+_R) + \beta^-_{R'}(\tilde{s}^+_R)] \vert \tilde{s}^{+-}_{R,R'} (p - 2q - 2k) \rangle.
 \end{aligned}
 ```

@@ -287,14 +287,15 @@ end
 
 #### Custom Operators
 
-You can extend the original code base with your own operators. For this, you just have to put the operator function in the `Operators` module. 
+You can extend the original code base with your own operators. All you have to do is to put your operator function 
+in `custom.jl` file located in `.../tJMagnonHolon/src/modules/mods/` directory. 
 Every operator function follows the same design.
 ```Julia
 function operator_name(args...; state::State, system::System)::SystemSuperposition
     ...
 end
 ```
-It takes any number of arguments `args...` interpreted as operator indices. The magnon-holon basis `state` and corresponding `system` are passed as keyword arguments.
+It takes any number of arguments `args...` which may for example represent operator indices. The magnon-holon basis `state` and corresponding `system` are passed as keyword arguments.
 For each basis state, the number of terms produced by the action of the operator is proportional to the `system.size` rather than `length(basis)`. For this reason,
 the output type is a sparse representation of a wave-function that may overlap with more than one subspace of the model.
 ```Julia
@@ -323,7 +324,7 @@ For example:
 ωRange = collect(-3:0.002:7)
 ```
 Smaller values of ``\delta`` will make features sharper and thinner. Accordingly, you need to set small enough step in ``\omega`` to resolve them.
-Otherwise there will be too few points per peak to properly cover its shape. Step ``\delta / 5`` is usually small enough.
+Otherwise there will be too few points per peak to properly cover its shape. Step ``\delta / 10`` is usually small enough.
 
 If the operator you use takes arguments (i.e. it has some indices), define a set of arguments to iterate over. 
 For example, if you use ``\hat{S}_{k}^{+}``, define range of momenta ``k`` you want to evaluate.
@@ -344,7 +345,7 @@ for k in kRange
 end
 ```
 Above we shifted the set of energy points `ωRange` by the energy `E0` of the bare wave-function `ψ` for better alignment (the shift is optional).
-The `operator` with argument `k` is applied to `ψ` internally. Proper interpratation of `ψ` (which is just a vector of complex numbers) is allowed by `system` argument.
+The `operator` with argument `k` is applied to `ψ` internally. Proper interpretation of `ψ` (which is just a vector of complex numbers) is allowed by `system` argument.
 
 !!! tip
     On HPC and for large systems, instead of a single loop, consider separate runs for different operator arguments (or subsets of those).
