@@ -196,7 +196,7 @@ Now the fact that set of all ``s`` can be well-ordered comes in handy. We define
 For example we can compare `charges` of the two configurations, and if `charges` are the same we compare `magnons`. With this we can pick the representative state ``\vert \tilde{s} \rangle``
 such that ``\tilde{s}`` it the *smallest* a out of all translations of particular configuration ``s``.
 
-- Second: we need to make sure that state ``\vert s \rangle`` is compatibile with momentum subspace ``k \in \{0, ..., N-1\}``.
+- Second: we need to make sure that state ``\vert s \rangle`` is compatible with momentum subspace ``k \in \{0, ..., N-1\}``.
 This is connected to normalizability of momentum states. Let us define periodicity of state ``\vert s \rangle``,
 as the minimal number ``R_s > 0`` of even translations that transform ``\vert s \rangle`` onto itself,
 ```math
@@ -208,7 +208,7 @@ kR_s\mod N = 0.
 ```
 If the above is fulfilled, the normalization factor ``N_s = \frac{N^2}{R_s}``. If the above is *not* fulfilled, then ``\vert s(k) \rangle \equiv 0`` is not normalizable.
 
-Set of representative states compatibile with ``k`` form a momentum basis for subspace with given ``L, N_e, S^z_{\mathrm{tot}}, k``.
+Set of representative states compatible with ``k`` form a momentum basis for subspace with given ``L, N_e, S^z_{\mathrm{tot}}, k``.
 
 ---
 
@@ -328,7 +328,7 @@ For example, let ``\hat{O}_{k,q} = \hat{\tilde{c}}_{k\uparrow}\hat{\tilde{c}}_{q
 \end{aligned}
 ```
 It is important to mention that periodicity-momentum correspondence has to be checked for all the intermediate states, not only for the final state.
-This means that the sum over ``R'`` only makes sense if state ``\vert \tilde{s}^+_R \rangle`` is compatibile with momentum ``p-2q``. Otherwise, one may introduce
+This means that the sum over ``R'`` only makes sense if state ``\vert \tilde{s}^+_R \rangle`` is compatible with momentum ``p-2q``. Otherwise, one may introduce
 false non-zero contributions to the final result. Other than that, there are no suprises compared to previous examples. 
 
 This summarizes our derivations. If you plan to introduce your own custom operators, read through [Custom Operators](@ref) subsection of the [Guide](@ref). 
