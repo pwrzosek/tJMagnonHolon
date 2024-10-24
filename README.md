@@ -14,9 +14,9 @@ A set of modules for t-J model (related) Hamiltonians diagonalization and variou
 
 ## Guide
 
-The **Guide** provides a tutorial explaining how start using above features.
+The **Guide** provides a tutorial explaining how to start using above features.
 You will find there practical examples for running your calculations or how to extend the existing code base with your own operators.
 
 See the **Documentation** section for the complete list of documented modules and features.
 
-In the **Advanced** section you can find technical discussion e.g. of the mathematics behind various features of the code.
+In the **Advanced** section you can find technical discussion of the mathematics behind various features of the code.
