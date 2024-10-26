@@ -84,7 +84,7 @@ function hash(s::State)
 end
 
 """
-`Basis === OrderedDict{State, Int64}`
+`Basis = OrderedDict{State, Int64}`
 
 Basis is stored as a hash table with Robin Hood hashing algorithm. Key corresponds to state of the system and value contains position of that state in basis.
 """
@@ -101,7 +101,7 @@ mutable struct LinearCombination
     coefficient::Vector{Complex{Float64}}
 end
 
-"`Model === SparseMatrixCSC{Complex{Float64},Int64}`"
+"`Model = SparseMatrixCSC{Complex{Float64},Int64}`"
 Model = SparseMatrixCSC{Complex{Float64},Int64}
 
 """
@@ -169,7 +169,7 @@ end
 """
     makeBasis(system::System) -> Basis
 
-Return `Basis === OrderedDict{State, Int64}` hash table representing basis for given `System::system` parameters. 
+Return `Basis = OrderedDict{State, Int64}` hash table representing basis for given `System::system` parameters. 
 Each index in `Basis` corresponds to `State`, and each value in `Basis` corresponds to position in the basis stored as `Int64`.
 """
 function makeBasis(system::System)::Basis
@@ -456,7 +456,7 @@ end
 """
     makeModel(basis::Basis, system::System) -> Model
 
-Calculate sparse matrix of the `model::Model` Hamiltonian, where `Model === SparseMatrixCSC{Complex{Float64},Int64}`.
+Calculate sparse matrix of the `model::Model` Hamiltonian, where `Model = SparseMatrixCSC{Complex{Float64},Int64}`.
 """
 function makeModel(basis::Basis, system::System)::Model
     subspaceSize = length(basis)

@@ -5,23 +5,23 @@ using OrderedCollections
 using Main.tJmodel1D: System, Basis, State, makeBasis, getStateInfo
 
 """
-    Superposition === OrderedDict{State, Complex{Float64}}
+    Superposition = OrderedDict{State, Complex{Float64}}
 
-Compact representation of wave function of a single subspace. Alternative to sparse vector.
+Compact representation of a wave function for single subspace. Alternative to sparse vector.
 """
 Superposition = OrderedDict{State, Complex{Float64}}
 
 """
-    SystemSuperposition === OrderedDict{System, Superposition}
+    SystemSuperposition = OrderedDict{System, Superposition}
 
-Compact representation of wave function overlaping with many subspaces of the model. 
+Compact representation of a wave function overlaping with many subspaces of the model. 
 """
 SystemSuperposition = OrderedDict{System, Superposition}
 
 """ 
-    SystemWaveFunction === OrderedDict{System, Vector{Complex{Float64}}}
+    SystemWaveFunction = OrderedDict{System, Vector{Complex{Float64}}}
 
-Represents a wave function that overlaps with many orthogonal subspaces of the model.
+Represents a wave function vector that overlaps with many subspaces of the model.
 """
 SystemWaveFunction = OrderedDict{System, Vector{Complex{Float64}}} 
 
