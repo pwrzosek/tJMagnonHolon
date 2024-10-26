@@ -58,8 +58,8 @@ and rewrite it to magnon-holon basis,
             + \hat{a}_i^\dag \hat{a}_i + \hat{a}_j^\dag \hat{a}_j - 2 \hat{a}_i^\dag \hat{a}_i \hat{a}_j^\dag \hat{a}_j - 1 \right) \hat{h}_j \hat{h}_j^\dag.
 ```
 
-We extend the above model by introducing two additional components:
-- ``\textcolor{orange}{\alpha}`` - anisotropy between quatization axis and perpendicular axes (XXZ anisotropy),
+We extend the above model by introducing two additional parameters:
+- ``\textcolor{orange}{\alpha}`` - anisotropy between quatization z-axis and perpendicular axes (XXZ anisotropy),
 - ``\textcolor{orange}{\lambda}`` - scaling parameter for interactions between neighboring magnons (magnon-magnon interaction).
 
 ```math
@@ -151,14 +151,14 @@ Our rules are simple. We connect bit values of ``\{0, 1\}`` with occupancy.
 Since bits are indexed from 0, we use the same indexing for sites. It may not be the most intuitive choice for physicists, but it is the most practical one (and natural for most programmers).
 It is also important to specify that only electron can carry a spin (holons are spinless fermions). To disambiguate the definition of the site occupied by a hole, we always set
 the bit of the `spin` variable to ``0`` if corresponding bit of `charges` variable is ``0``.
-Therefore only 3 out of 4 combinations are meaningful for us (``i``[`charges`], ``i``[`spins`]) ``\in\{(0,0), (1,0), (1,1)\}``.
+Therefore only 3 out of 4 combinations are meaningful for us (``i``-th bit of `charges`, ``i``-th bit of `spins`) ``\in\{(0,0), (1,0), (1,1)\}``.
 
 Before we follow with translation operator, let us transform the above representation to magnon-holon basis.
 We look at the details of the transformation to magnon-holon basis (operators defined at the begining), and see that the transformation does not alter the electron/hole configuration. 
 We therefore use the above defined `charges` without changes.
 (Of course one can swap the meaning of ``0`` and ``1`` bit values, but using ``0`` for hole seems more intuitive).
 On the other hand, we have no spins in magnon-holon basis, but magnons instead. Let us define `magnons` - number that represents configuration of magnons in the system.
-On odd sites spins up directly transform to magnons, so there's nothing to do there. On even sites on the other hand,
+On odd sites, spins up directly transform to magnons. If we chose ``1``s to represent presence of magnons then there's nothing to do there. On even sites on the other hand,
 spins down transform to magnons, so we have to transform all zeros to ones and all ones to zeros on even sites. 
 We call this last step a rotation of sublattice A (sublattice of even-indexed sites assuming 0-based indexing).
 There is of course a deeper meaning behind calling it a rotation but it won't be important here.
@@ -192,7 +192,7 @@ Two more steps are required to form a basis out ot the above defined momentum st
 
 - First: we need to make sure that they have unique representation (for linear independence of basis states).
 For this we need to pick a *representative* state ``\vert \tilde{s} \rangle`` out of the set of even translations ``\hat{D}^r \vert s \rangle`` of particular configuration ``s``.
-Now the fact that set of all ``s`` can be well-ordered comes in handy. We define our ordering relation between ``s_1`` and ``s_2``. It will allow us to answer e.g. if ``s_1`` is greater than ``s_2``.
+Now the fact that set of all ``s`` can be well-ordered comes in handy. We define our ordering relation between ``s_1`` and ``s_2``. It will allow us to answer e.g. if ``s_1`` is *greater* than ``s_2``.
 For example we can compare `charges` of the two configurations, and if `charges` are the same we compare `magnons`. With this we can pick the representative state ``\vert \tilde{s} \rangle``
 such that ``\tilde{s}`` it the *smallest* a out of all translations of particular configuration ``s``.
 
@@ -200,7 +200,7 @@ such that ``\tilde{s}`` it the *smallest* a out of all translations of particula
 This is connected to normalizability of momentum states. Let us define periodicity of state ``\vert s \rangle``,
 as the minimal number ``R_s > 0`` of even translations that transform ``\vert s \rangle`` onto itself,
 ```math
-\min \{ R_s : R_s > 0 \land \hat{D}^{R_s} \vert s \rangle = \vert s \rangle \}.
+R_s = \min \{ r \in \mathbb{N} \setminus \{0\} : \hat{D}^{r} \vert s \rangle = \vert s \rangle \}.
 ```
 The compatibility of ``\vert s \rangle`` with ``k`` requires that,
 ```math
@@ -252,7 +252,7 @@ Using the result for ``\hat{S}^z_k \vert \tilde{s}(p) \rangle``, we easily obtai
 ```math
 \hat{S}^z_r \vert \tilde{s}(p) \rangle = \frac{1}{\sqrt{L}} \sum_{q} \exp(iqr) \hat{S}^z_q \vert \tilde{s}(p) \rangle = \frac{1}{L} \sum_{q,R} \exp[-iq(R-r)]\alpha_R(\tilde{s}) \vert \tilde{s} (p-2q) \rangle.
 ```
-In the above sum, we assert the periodicity-momentum match between state ``\vert \tilde{s} \rangle`` and  momentum ``p-2q`` by excluding from the sum terms that do not fulfill periodicity-momentum relation.
+In practice, we assert the periodicity-momentum match between state ``\vert \tilde{s} \rangle`` and  momentum ``p-2q`` by excluding from the above sum terms that do not fulfill periodicity-momentum relation.
 
 Let us now work out the ladder oparator ``\hat{S}^+_k``. Compared to the previous example, it will require few more steps, since it affects the number of spins up in the system.
 ```math
