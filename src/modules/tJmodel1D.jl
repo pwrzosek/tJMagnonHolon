@@ -11,11 +11,11 @@ using JSON
 # Fields
 *   `t::Float64`: value of the hopping constant t.
 *   `J::Float64`: value of the coupling constant J. For ferromagnet `J < 0`, for antiferromagnet `J > 0`.
-*   `λ::FLoat64`: parameter for scaling magnon-magnon interactions. For pure t-J model `λ = 1.0`.
+*   `λ::FLoat64`: parameter for scaling magnon-magnon interactions. For the pure t-J model `λ = 1.0`.
 *   `α::Float64`: parameter for scaling XXZ anisotropy. For t-J model `α = 1.0`, for t-Jz model `α = 0.0`.
 *   `size::Int64`: number of lattice sites.
 *   `electrons::Int64`: number of electrons (must be in range `0:System.size` - Mott insulator constraint enforced).
-*   `spinsUp::Int64`: index in range `0:electrons` indicating number of spins up.
+*   `spinsUp::Int64`: index in range `0:electrons` indicating the number of spins up.
 *   `momentum::Int64`: index of internal momentum sector in range `0:(System.size / 2 - 1)`. Index `momentum` corresponds to momentum `k = 2π * momentum / (System.size / 2)`.
 """
 struct System
@@ -34,7 +34,7 @@ end
 """
     System(system::System = System(DEFAULT_ARGS...) [; t = system.t, J = system.J, ...,  momentum = system.momentum]) -> System
 
-Create a new instance of `System` using `system::System` as template with fields updated according to given `kwargs`. Uses a default template if no template `system::System` provided.
+Create a new instance of `System` using `system::System` as a template with fields updated according to the given `kwargs`. Uses a default template if no template `system::System` is provided.
 """
 System(
     system::System = System(
@@ -59,7 +59,7 @@ System(
 
 
 """
-`mutable struct State` mutable structure for storing configuration of electrons and magnons in magnon-holon basis using binary representation
+`mutable struct State` mutable structure for storing the configuration of electrons and magnons in magnon-holon basis using binary representation
 # Fields
 *   `charges::Int64`: bit value 0 → hole,      1 → electron
 *   `magnons::Int64`: bit value 0 → no magnon, 1 → magnon
@@ -91,10 +91,10 @@ Basis is stored as a hash table with Robin Hood hashing algorithm. Key correspon
 Basis = OrderedDict{State, Int64}
 
 """
-`mutable struct LinearCombination`: structure for storing result of hamiltonian action on states from `basis::Basis`
+`mutable struct LinearCombination`: structure for storing result of Hamiltonian action on states from `basis::Basis`
 # Fields
 *   `state::State`: system configurations in binary representation written as decimal number
-*   `coefficient::Vector{Complex{Float64}}`: coeffcient multiplying state in the linear combination
+*   `coefficient::Vector{Complex{Float64}}`: coeffcient multiplying `state` in the linear combination
 """
 mutable struct LinearCombination
     state::Vector{State}
@@ -111,7 +111,7 @@ Run model diagonalization procedure. If no input provided, construct input using
 Return `(system::System, basis::Basis, model::Model, factorization)` where `factorization` is `nothing` if `eigsolve == false`.
 If `eigsolve == true` then `factorization = (eigenvalues, eigenvectors, convergenceInfo)`.
 Algorithm tries to converge at least `howmany` eigenvalues. 
-Always print `convergenceInfo` to check accuracy as there is no warning if eigenvalues are poorly converged.
+Always print `convergenceInfo` to check accuracy since there is no warning if eigenvalues are poorly converged.
 Keyword `kryldim` allows to specify the dimension of Krylov subspace for diagonalization algorithm (implicitely restarted Lanczos iteration).
 """
 function run(input::Union{Missing, System} = missing; eigsolve = true, howmany = 1, kryldim = 30)
@@ -140,7 +140,7 @@ function run(input::Union{Missing, System} = missing; eigsolve = true, howmany =
     end
 end
 
-"Check if `system::System` describes a valid system. Throw `error` if any input parameter was invalid, otherwise return `nothing`."
+"Check if `system::System` describes a valid system. Throw `error` if any input parameter is invalid, otherwise return `nothing`."
 function checkSystem(system::System)
     if (system.size < 2) || (system.size > 62) || isodd(system.size)
         error("`system size` must be even integer in range `[2, 62]`!")
@@ -269,7 +269,7 @@ end
 """
     isGreater(a::State, b::State) -> Bool
 
-Ordering function for basis states in magnon-holon representation. Returns `true` if `a > b` and `false` otherwise.
+Ordering function for basis states in magnon-holon representation. Returns `true` if `a > b`, and `false` otherwise.
 """
 function isGreater(a::State, b::State)::Bool
     if (a.charges == b.charges) 
@@ -282,7 +282,7 @@ end
     getStateInfo(state::State, system::System) -> Tuple{Bool, State, Int64, Int64}
 
 Return `(hasMomentum, representative, periodicity, distance)` where
-*   `hasMomentum::Bool`: `true` if `state` matches momentum of `system` and `false` otherwise
+*   `hasMomentum::Bool`: `true` if `state` matches momentum of `system`, and `false` otherwise
 *   `representative::State`: representative state corresponding to `state`
 *   `periodicity::Int64`: minimal `R` such that `state` shifted `2R` times with translation operator returns back to `state`
 *   `distance::Int64`: distance between `state` and `representative` state in number of even translations

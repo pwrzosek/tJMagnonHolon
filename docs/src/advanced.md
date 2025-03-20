@@ -1,9 +1,9 @@
 # Advanced
 
-The purpose of this section is to provide additional information about magnon-holon representation.
+This section provides additional information about magnon-holon representation.
 We will cover here details of the transformation to magnon-holon basis, including:
 - sublattice-wise transformation of standard operators,
-- standard ``t``-``J`` Hamiltonian, its magnon-holon representation and generalization to ``t``-``J_{xy}``-``J_{z}(\lambda)`` model,
+- standard ``t``-``J`` Hamiltonian, its magnon-holon representation and generalization to ``t``-``J_{xx}``-``J_{z}(\lambda)`` model,
 - quantities preserved by the generalized Hamiltonian and commutation relation with translation operator,
 - definition and numerical representation of momentum states and representative states in magnon-holon basis,
 - example derivations for operators action on magnon-holon representative basis states.
@@ -59,17 +59,17 @@ and rewrite it to magnon-holon basis,
 ```
 
 We extend the above model by introducing two additional parameters:
-- ``\textcolor{orange}{\alpha}`` - anisotropy between quatization z-axis and perpendicular axes (XXZ anisotropy),
+- ``\textcolor{orange}{\alpha}`` - anisotropy between quantization z-axis and perpendicular axes (XXZ anisotropy),
 - ``\textcolor{orange}{\lambda}`` - scaling parameter for interactions between neighboring magnons (magnon-magnon interaction).
 
 ```math
-\hat{H} = \hat{H}_t + \hat{H}_{xy} + \hat{H}_z
+\hat{H} = \hat{H}_t + \hat{H}_{xx} + \hat{H}_z
 ```
 ```math
 \hat{H}_t = t \sum_{\langle i,j \rangle} \hat{P}_i \left( \hat{h}_i^\dag \hat{h}_j \hat{a}_i + \hat{h}_i^\dag \hat{h}_j \hat{a}_j^\dag \right) \hat{P}_j + \textrm{H.c.},
 ```
 ```math
-\hat{H}_{xy} = \frac{\textcolor{orange}{\alpha} J}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left( \hat{a}_i \hat{a}_j + \hat{a}_i^\dag \hat{a}_j^\dag \right) \hat{h}_j \hat{h}_j^\dag
+\hat{H}_{xx} = \frac{\textcolor{orange}{\alpha} J}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left( \hat{a}_i \hat{a}_j + \hat{a}_i^\dag \hat{a}_j^\dag \right) \hat{h}_j \hat{h}_j^\dag
 ```
 ```math
 \hat{H}_{z} = \frac{J}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left(\hat{a}_i^\dag \hat{a}_i + \hat{a}_j^\dag \hat{a}_j - 2 \textcolor{orange}{\lambda} \hat{a}_i^\dag \hat{a}_i \hat{a}_j^\dag \hat{a}_j - 1 \right) \hat{h}_j \hat{h}_j^\dag
@@ -77,25 +77,24 @@ We extend the above model by introducing two additional parameters:
 
 ---
 
-For numerical diagnalization of an abstract model like the one above, it is important to determine its symmetries. Those symmetries generate quatities that are conserved by the model. 
+For numerical diagonalization of an abstract model like the one above, it is important to determine its symmetries. Those symmetries generate quantities that are conserved by the model. 
 When writing the matrix of the model Hamiltonian in a basis, the basis may incorporate those symmetries, i.e. the basis states can be taken as eigen-states of the symmetry operators.
-Eigen-states that correspond to different eigen-values of the symmetry operator are orthogonal. Thus Hamiltonian written in such a basis will consist of orthogonal blocks that can be
-enumerated by the eigen-values of the symmetry operators used for the basis construction. Each such block can be diagonalized separately, decreasing the amount of memory needed
+Eigen-states that correspond to different eigenvalues of the symmetry operator are orthogonal. Thus, Hamiltonian written in such a basis will consist of orthogonal blocks that can be
+enumerated by the eigenvalues of the symmetry operators used for the basis construction. Each such block can be diagonalized separately, decreasing the amount of memory needed
 to store the Hamiltonian matrix and resulting eigen-states. But what constitutes a symmetry of our model? The word symmetry may be misleading in this case, since the symmetry does not have
 to reflect only geometrical properties. What we really look for when asking about the symmetries of the Hamiltonian, are operators that commute with the Hamiltonian,
 ```math
 [\hat{H}, \hat{O}] = 0.
 ```
 
-Some of the conserved quantities are pretty easy to notice. For example, size ``L`` of the system is one of them. What is the operator for the system size? We don't have to define it explicitely.
-It is enough for us that ``L`` enumerates its eigen-values.
+At the beginning, let us observe that the size ``L`` of the system is conserved by the model Hamiltonian.
 
 Next, we can observe that our Hamiltonian does not change the number of electrons (holes). The corresponding operator is ``\hat{N} = \sum_i \hat{\tilde{n}}_i``. One can check that,
 ```math
 [\hat{H}, \hat{N}] = 0.
 ```
-The eigen-values of ``\hat{N}`` are simply ``N_e \in \{0, 1, 2, ..., L\}``. This operator does not influence the system size either.
-Thus subspace for given ``L`` can be split into futher subspaces with different electron occupancy ``N_e``.
+The eigenvalues of ``\hat{N}`` are simply ``N_e \in \{0, 1, 2, ..., L\}``. This operator does not influence the system size either.
+Thus, subspace for given ``L`` can be split into further subspaces with different electron occupancy ``N_e``.
 
 In similar way, once we set a system size ``L`` and number of electrons ``N_e``, such subspace can be split into subspaces with different magnetization ``S^z_{\mathrm{tot}}``.
 The corresponding operator is ``\hat{S}^z_{\mathrm{tot}} = \sum_i \hat{S}^z_i``. It indeed commutes with the Hamiltonian and does not break considered so far symmetries 
@@ -115,7 +114,7 @@ Hamiltonian for all values of ``\lambda``,
 ```math
 [\hat{H}, \hat{D}] = 0.
 ```
-We will call ``\hat{D}`` an *even translation* operator. It of course commute with all operatators that ``\hat{T}`` commutes with.
+We will call ``\hat{D}`` an *even translation* operator. It of course commute with all the operators that ``\hat{T}`` commutes with.
 
 All the above symmetries are incorporated in the [tJMagnonHolon](@ref). But there is still a room for improvements. For example, parity symmetry is another symmetry that can be taken into account.
 It is important to remember that additional symmetries will make the basis in itself more complex. This can make the obtained results difficult to analyze or interpret.
@@ -130,7 +129,7 @@ automatically include the first three of them. We will use the following notatio
 - system size: ``L = 2N, N \in \mathbb{N}``,
 - number of electrons: ``N_e \in \{0, 1, ..., L\}``,
 - number of spins up: ``n_\uparrow \in \{0, 1, ..., N_e\}``.
-Notice that for given ``N_e`` the magnetization ``S^z_{\mathrm{tot}}`` is uniquely defiend by ``n_\uparrow``,
+Notice that for given ``N_e`` the magnetization ``S^z_{\mathrm{tot}}`` is uniquely defined by ``n_\uparrow``,
 ```math
     S^z_{\mathrm{tot}} \propto n_\uparrow - n_\downarrow = n_\uparrow - (N_e - n_\uparrow) = 2n_\uparrow - N_e,
 ```
@@ -151,17 +150,17 @@ Our rules are simple. We connect bit values of ``\{0, 1\}`` with occupancy.
 Since bits are indexed from 0, we use the same indexing for sites. It may not be the most intuitive choice for physicists, but it is the most practical one (and natural for most programmers).
 It is also important to specify that only electron can carry a spin (holons are spinless fermions). To disambiguate the definition of the site occupied by a hole, we always set
 the bit of the `spin` variable to ``0`` if corresponding bit of `charges` variable is ``0``.
-Therefore only 3 out of 4 combinations are meaningful for us (``i``-th bit of `charges`, ``i``-th bit of `spins`) ``\in\{(0,0), (1,0), (1,1)\}``.
+Therefore, only 3 out of 4 combinations are meaningful for us (``i``-th bit of `charges`, ``i``-th bit of `spins`) ``\in\{(0,0), (1,0), (1,1)\}``.
 
 Before we follow with translation operator, let us transform the above representation to magnon-holon basis.
-We look at the details of the transformation to magnon-holon basis (operators defined at the begining), and see that the transformation does not alter the electron/hole configuration. 
+We look at the details of the transformation to magnon-holon basis (operators defined at the beginning), and see that the transformation does not alter the electron/hole configuration. 
 We therefore use the above defined `charges` without changes.
 (Of course one can swap the meaning of ``0`` and ``1`` bit values, but using ``0`` for hole seems more intuitive).
 On the other hand, we have no spins in magnon-holon basis, but magnons instead. Let us define `magnons` - number that represents configuration of magnons in the system.
 On odd sites, spins up directly transform to magnons. If we chose ``1``s to represent presence of magnons then there's nothing to do there. On even sites on the other hand,
 spins down transform to magnons, so we have to transform all zeros to ones and all ones to zeros on even sites. 
 We call this last step a rotation of sublattice A (sublattice of even-indexed sites assuming 0-based indexing).
-There is of course a deeper meaning behind calling it a rotation but it won't be important here.
+There is of course a deeper meaning behind calling it a rotation, but it won't be important here.
 
 After the rotation of sublattice A is performed, we land at the following representation,
 - for `charges`:
@@ -174,7 +173,7 @@ We disambiguate the hole representation in the same way as before (there cannot 
 The above corresponds to the [`State`](@ref Main.tJmodel1D.State) structure in the [tJMagnonHolon](@ref) code.
 
 Let us now follow with introduction of *momentum states* - eigen-states of the even translation operator ``\hat{D}``.
-Let ``\vert s, L, N_e, n_\uparrow \rangle`` stand for a `state`  with certain configuration of `charges` and `magnons` denoted by `s` 
+Let ``\vert s, L, N_e, n_\uparrow \rangle`` stand for a `state` with certain configuration of `charges` and `magnons` denoted by `s` 
 for a system with ``L = 2N, N \in \mathbb{N}`` sites, ``N_e`` electrons, and ``n_\uparrow`` spins up. Let us also shortly write ``\vert s \rangle``
 when exact values of ``L, N_e, n_\uparrow`` are not important. Notice that set of all `s` can be well-ordered since `s` is represented by a pair of integers.
 We define the magnon-holon momentum states in a standard way (we just use ``\hat{D}`` instead of ``\hat{T}``),
@@ -185,16 +184,16 @@ One can see that indeed ``\vert s(k) \rangle`` are eigen-states of ``\hat{D}``,
 ```math
 \hat{D} \vert s(k) \rangle = \exp\left(\frac{2\pi i}{N}k\right) \vert s(k) \rangle,
 ```
-with eigen-values ``\exp\left(\frac{2\pi i}{N}k\right)``, where ``k \in \{0, 1, ..., N-1\}``. This ``k`` variable enumerates the subspaces generated by even translation operator.
+with eigenvalues ``\exp\left(\frac{2\pi i}{N}k\right)``, where ``k \in \{0, 1, ..., N-1\}``. This ``k`` variable enumerates the subspaces generated by even translation operator.
 When `system` variable of type [`System`](@ref Main.tJmodel1D.System) is created, ``k`` stands for `system.momentum` field. 
 
-Two more steps are required to form a basis out ot the above defined momentum states. 
+Two more steps are required to form a basis out of the above defined momentum states. 
 
 - First: we need to make sure that they have unique representation (for linear independence of basis states).
 For this we need to pick a *representative* state ``\vert \tilde{s} \rangle`` out of the set of even translations ``\hat{D}^r \vert s \rangle`` of particular configuration ``s``.
 Now the fact that set of all ``s`` can be well-ordered comes in handy. We define our ordering relation between ``s_1`` and ``s_2``. It will allow us to answer e.g. if ``s_1`` is *greater* than ``s_2``.
-For example we can compare `charges` of the two configurations, and if `charges` are the same we compare `magnons`. With this we can pick the representative state ``\vert \tilde{s} \rangle``
-such that ``\tilde{s}`` it the *smallest* a out of all translations of particular configuration ``s``.
+For example, we can compare `charges` of the two configurations, and if `charges` are the same we compare `magnons`. With this we can pick the representative state ``\vert \tilde{s} \rangle``
+such that ``\tilde{s}`` it the *smallest* out of all translations of particular configuration ``s``.
 
 - Second: we need to make sure that state ``\vert s \rangle`` is compatible with momentum subspace ``k \in \{0, ..., N-1\}``.
 This is connected to normalizability of momentum states. Let us define periodicity of state ``\vert s \rangle``,
@@ -212,7 +211,7 @@ Set of representative states compatible with ``k`` form a momentum basis for sub
 
 ---
 
-Equiped with the introduced notation, we are ready to derive some expressions for operators action on magnon-holon (momentum) basis states.
+Equipped with the introduced notation, we are ready to derive some expressions for operators action on magnon-holon (momentum) basis states.
 To shorten the notation, from now on, we write ``\exp(-ikr)`` instead of ``\exp\left(-\frac{2\pi i}{N}kr\right)``.
 It should be clear to which momentum subspace we refer even if we use redefined ``k`` to enumerate it.
 Just remember that in the code `momentum` field of [`System`](@ref Main.tJmodel1D.System) is an integer from set ``\{0, ..., N-1\}``.
@@ -234,10 +233,10 @@ We evaluate its action on a magnon-holon momentum basis state ``\vert \tilde{s}(
 \end{aligned}
 ```
 where ``(-1)^{R} \left( \frac{1}{2} - \hat{a}_{R} \hat{a}^{\dag}_{R} \right) \hat{h}^{\dag}_{R} \hat{h}_{R} \vert \tilde{s} \rangle = \alpha_R(\tilde{s}) \vert \tilde{s} \rangle``.
-We intentionally provide all the transformations step by step to showcase the derivation procedure. We use the definition of the momentum representation (Fourier transform) for both the operator and the state.
+We intentionally provide all transformations step by step to showcase the derivation procedure. We use the definition of the momentum representation (Fourier transform) for both the operator and the state.
 We follow with the transformation of the operators to magnon-holon basis. Then we commute the even translation operator ``\hat{D}`` with other operators. Next 3 lines are probably least transparent.
-We change the summation order, rendering the action of the operators (other than even translation operator) independent from the Fourier transform to momentum space.
-Finally, we evaluate the action of operators on the state ``\vert \tilde{s} \rangle`` and we write the state back in the momentum space.
+We change the summation order, rendering the action of the operators (other than even translation operator) independent of the Fourier transform to momentum space.
+Finally, we evaluate the action of operators on the state ``\vert \tilde{s} \rangle``, and we write the state back in the momentum space.
 It is immediately visible that ``\alpha_R(\tilde{s})`` evaluates to ``0`` when site ``R`` in state ``\vert \tilde{s} \rangle`` is occupied by a hole. When site ``R`` is not occupied by the hole,
 possible values of ``\alpha_R(\tilde{s})`` are given according to the table below,
 
@@ -252,9 +251,9 @@ Using the result for ``\hat{S}^z_k \vert \tilde{s}(p) \rangle``, we easily obtai
 ```math
 \hat{S}^z_r \vert \tilde{s}(p) \rangle = \frac{1}{\sqrt{L}} \sum_{q} \exp(iqr) \hat{S}^z_q \vert \tilde{s}(p) \rangle = \frac{1}{L} \sum_{q,R} \exp[-iq(R-r)]\alpha_R(\tilde{s}) \vert \tilde{s} (p-2q) \rangle.
 ```
-In practice, we assert the periodicity-momentum match between state ``\vert \tilde{s} \rangle`` and  momentum ``p-2q`` by excluding from the above sum terms that do not fulfill periodicity-momentum relation.
+In practice, we assert the periodicity-momentum match between state ``\vert \tilde{s} \rangle`` and momentum ``p-2q`` by excluding from the above sum terms that do not fulfill periodicity-momentum relation.
 
-Let us now work out the ladder oparator ``\hat{S}^+_k``. Compared to the previous example, it will require few more steps, since it affects the number of spins up in the system.
+Let us now work out the ladder operator ``\hat{S}^+_k``. Compared to the previous example, it will require few more steps, since it affects the number of spins up in the system.
 ```math
 \begin{aligned}
 \hat{S}^+_k \vert \tilde{s}(p) \rangle &= \frac{1}{\sqrt{N_s}} \sum_{r=0}^{N-1} \exp(-ipr) \hat{S}^+_k \hat{D}^r \vert \tilde{s} \rangle = \frac{1}{\sqrt{L N_s}} \sum_{r=0}^{N-1} \sum_{r'=0}^{L-1} \exp(-ipr - ikr') \hat{S}^+_{r'} \hat{D}^r \vert \tilde{s} \rangle \\
@@ -275,11 +274,11 @@ Let us now work out the ladder oparator ``\hat{S}^+_k``. Compared to the previou
 with ``\frac{1}{2}(\hat{a}_{R} + \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle = [\alpha^+_R(\tilde{s}) \vert s^+_R \rangle + \alpha^-_R(\tilde{s}) \vert s^-_R \rangle]``
 and ``\frac{(-1)^R}{2}(\hat{a}_{R} - \hat{a}^{\dag}_{R}) \hat{h}_{R} \hat{h}^{\dag}_{R} \vert \tilde{s} \rangle = [\beta^+_R(\tilde{s}) \vert s^+_R \rangle + \beta^-_R(\tilde{s}) \vert s^-_R \rangle]``,
 where ``\vert s^{\pm}_R \rangle \equiv \vert s^{\pm}_R, L, N_e, n_\uparrow \pm 1 \rangle`` comes from flipping a spin at site ``R`` in state ``\vert \tilde{s} \rangle``. 
-The normalization factors ``\sqrt{N_{s^{\pm}_R}}`` appear since new states ``\vert s^{\pm}_R \rangle`` may in general have periodicity different than ``\vert \tilde{s} \rangle``. 
+The normalization factors ``\sqrt{N_{s^{\pm}_R}}`` appear since new states ``\vert s^{\pm}_R \rangle`` may in general have periodicity different from ``\vert \tilde{s} \rangle``. 
 These states may also not be representative states, so we need to find their representatives ``\vert \tilde{s}^{\pm}_R \rangle`` and include proper phase shifts,
 as determined by the distance ``d_{s^{\pm}_R}`` to the representative.
 Of course, ``\beta^-_R(\tilde{s}) = -\alpha^-_R(\tilde{s})`` meaning that we can only increase the number of spins up (as expected from ``\hat{S}^+_k``). On the other hand,
-``\beta^+_R(\tilde{s}) = \alpha^+_R(\tilde{s})`` with ``\alpha^+_R(\tilde{s})`` equal to ``0`` when ``R`` is occupied by a hole or otherwise it is given according to the table below.
+``\beta^+_R(\tilde{s}) = \alpha^+_R(\tilde{s})`` with ``\alpha^+_R(\tilde{s})`` equal to ``0`` when ``R`` is occupied by a hole, or otherwise it is given according to the table below.
 
 | ``R`` in sublattice | magnons at ``R`` in ``\vert \tilde{s} \rangle`` | ``\alpha^+_R(\tilde{s})`` |
 | :------------------ | :---------------------------------------------: | ------------------------: |
@@ -329,9 +328,9 @@ For example, let ``\hat{O}_{k,q} = \hat{\tilde{c}}_{k\uparrow}\hat{\tilde{c}}_{q
 ```
 It is important to mention that periodicity-momentum correspondence has to be checked for all the intermediate states, not only for the final state.
 This means that the sum over ``R'`` only makes sense if state ``\vert \tilde{s}^+_R \rangle`` is compatible with momentum ``p-2q``. Otherwise, one may introduce
-false non-zero contributions to the final result. Other than that, there are no suprises compared to previous examples. 
+false non-zero contributions to the final result. Other than that, there are no surprises compared to previous examples. 
 
 This summarizes our derivations. If you plan to introduce your own custom operators, read through [Custom Operators](@ref) subsection of the [Guide](@ref). 
-You will learn there how the opreators functions are desined in [tJMagnonHolon](@ref). Then you may want to compare presented here derivations,
+You will learn there how the operators functions are designed in [tJMagnonHolon](@ref). Then you may want to compare presented here derivations,
 with corresponding operators functions in the `operators.jl` file in `.../tJMagnonHolon/src/modules/`.
 

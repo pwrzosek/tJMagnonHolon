@@ -1,9 +1,9 @@
 # Documentation
 
-This page contains a list of implemented types, methods and functions.
-All descriptions in the following sections are raw docstrings extracted from corresponding modules.
-Sections are organized in logical order possible to read from top to bottom.
-Each section ends with alphabetical index organized by feature type in order Type, Method, Function.
+This page contains a list of implemented types, methods, and functions. 
+All descriptions in the following sections are raw docstrings extracted from corresponding modules. 
+Sections are organized in order possible to read from top to bottom. 
+Each section ends with an alphabetical index organized by feature type in order: Type, Method, Function.
 
 
 ## Module tJmodel1D

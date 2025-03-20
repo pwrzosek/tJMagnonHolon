@@ -2,12 +2,12 @@
 
 *t-J model in magnon-holon basis.*
 
-A set of modules for t-J model (related) Hamiltonians diagonalization and various correlation functions generation.
+A set of modules for t-J model (related) Hamiltonian diagonalization and various correlation functions generation.
 
 ## Features
 
 - Generate sparse matrix of t-J model Hamiltonian in magnon-holon basis.
-- Generate full (small systems) or partial (large systems) set of eigen-values and related eigen-vectors of t-J model.
+- Generate full (small systems) or partial (large systems) set of eigenvalues and related eigenvectors of t-J model.
 - Calculate operators action on wave functions in magnon-holon basis.
 - Calculate correlation functions for the t-J model.
 - Save data to JSON files and use them as data sets in Mathematica, R, Python, etc.

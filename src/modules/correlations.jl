@@ -16,7 +16,7 @@ end
     calculate(ωRange, δ, system, ψ, operator, args...; kryldim = 400) -> Vector{ComplexF64}
 
 Apply `operator` with arguments `args...` to `system` wave function `ψ`. Then calculate correlation function over `ωRange` with artificial broadening `δ` using Lanczos tridiagonalization with initial state `Ô | ψ >`.
-Return `Vector{ComplexF64}` of size `length(ωRange)` with calculated values of the correlation function. A keyword argument `kryldim` defines maximum dimension of Krylov subspace for Lanczoas tridiagonalization algorithm. Typically `kryldim` ∈ [100, 1000] gives best performance.
+Return `Vector{ComplexF64}` of size `length(ωRange)` with calculated values of the correlation function. A keyword argument `kryldim` defines maximum dimension of Krylov subspace for Lanczoas tridiagonalization algorithm. Typically values of `kryldim` ∈ [100, 1000] give best performance.
 Small values of `kryldim` speed up the calculation process but reduce the quality of results. It is not advised to set Krylov dimension too high - performance eventually drops due to orthogonality loss.
 """
 function calculate(ωRange, δ, system, ψ, operator, args...; kryldim = 400)

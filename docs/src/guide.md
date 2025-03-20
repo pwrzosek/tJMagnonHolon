@@ -109,13 +109,13 @@ system = Main.tJmodel1D.System(
 
 The first four parameters ``\textcolor{orange}{t}, \textcolor{orange}{J}, \textcolor{orange}{\lambda}, \textcolor{orange}{\alpha}`` are parameters of the Hamiltonian ``\hat{H}`` (in magnon-holon basis).
 ```math
-\hat{H} = \hat{H}_t + \hat{H}_{xy} + \hat{H}_z
+\hat{H} = \hat{H}_t + \hat{H}_{xx} + \hat{H}_z
 ```
 ```math
 \hat{H}_t = \textcolor{orange}{t}\sum_{\langle i,j \rangle} \hat{h}_i^\dag \hat{h}_j \left( \hat{a}_i + \hat{a}_j^\dag \right) + \textrm{H.c.}
 ```
 ```math
-\hat{H}_{xy} = \frac{\textcolor{orange}{\alpha} \textcolor{orange}{J}}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left( \hat{a}_i \hat{a}_j + \hat{a}_i^\dag \hat{a}_j^\dag \right) \hat{h}_j \hat{h}_j^\dag
+\hat{H}_{xx} = \frac{\textcolor{orange}{\alpha} \textcolor{orange}{J}}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left( \hat{a}_i \hat{a}_j + \hat{a}_i^\dag \hat{a}_j^\dag \right) \hat{h}_j \hat{h}_j^\dag
 ```
 ```math
 \hat{H}_{z} = \frac{\textcolor{orange}{J}}{2} \sum_{\langle i,j \rangle} \hat{h}_i \hat{h}_i^\dag \left(\hat{a}_i^\dag \hat{a}_i + \hat{a}_j^\dag \hat{a}_j - 2 \textcolor{orange}{\lambda} \hat{a}_i^\dag \hat{a}_i \hat{a}_j^\dag \hat{a}_j - 1 \right) \hat{h}_j \hat{h}_j^\dag
@@ -127,7 +127,7 @@ See section [Advanced](@ref) for detailed discussion.
 #### Other ways to define System
 
 Used in the above example values for system parameters are equal to the default values defined inside the `tJmodel1D` module. 
-To create a `system` with default values it is enaugh to call 
+To create a `system` with default values it is enough to call 
 [`System`](@ref Main.tJmodel1D.System(::Main.tJmodel1D.System)) 
 function without arguments.
 ```@example
@@ -139,8 +139,8 @@ You can also provide any subset of keyword arguments. Not provided arguments wil
 system = Main.tJmodel1D.System(spinsUp = 0)
 ```
 
-Additionally, if you are alergic to explicitely writing arguments names, you can use a constructor of [`System`](@ref Main.tJmodel1D.System) structure. 
-In this case the order of arguments matters and it follows: `(t, J, λ, α, size, electrons, spinsUp, momentum)`. 
+Additionally, if you wish to avoid to explicitly writing arguments names, you can use a constructor of [`System`](@ref Main.tJmodel1D.System) structure. 
+In this case the order of arguments matters, and it follows: `(t, J, λ, α, size, electrons, spinsUp, momentum)`. 
 ```@example 1
 system = Main.tJmodel1D.System(1.0, 1.0, 1.0, 1.0, 16, 16, 8, 0)
 ```
@@ -184,7 +184,7 @@ E0 = real(eigenvalues[1])
 !!! note
     Eigenvalues are sorted with respect to real part from smallest to largest.
 
-By default only 1 eigenvalue with smallest real part will be calculated. To calculate more eigenvalues use `howmany` keyword argument.
+By default, only 1 eigenvalue with the smallest real part will be calculated. To calculate more eigenvalues use `howmany` keyword argument.
 For example, code below finds singlet and triplet energy of 2-site antiferromagnetic spin 1/2 Heisenberg chain (periodic) for spin coupling J = 1.
 ```@example 2
 system = Main.tJmodel1D.System(J = 1.0, size = 2, electrons = 2, spinsUp = 1)
@@ -213,13 +213,13 @@ system, basis, model, factorization = Main.tJmodel1D.run(system, howmany = 40, k
 #### Skipping diagonalization
 
 If you just need Hamiltonian matrix and its basis tell the [`run`](@ref Main.tJmodel1D.run) function to skip the factorization procedure by setting keyword argument `eigsolve = false`.
-In such case `factorization` will recieve `missing` value from [`run`](@ref Main.tJmodel1D.run).
+In such case `factorization` will receive `missing` value from [`run`](@ref Main.tJmodel1D.run).
 ```Julia
 system, basis, model, factorization = Main.tJmodel1D.run(system, eigsolve = false)
 ```
 
 !!! tip
-    Use dummy variables if you don't need some of the returned objects.
+    Use dummy variables if you don't need some of returned objects.
     ```Julia
     _, _, _, factorization = Main.tJmodel1D.run(system)
     system, basis, model, _ = Main.tJmodel1D.run(system, eigsolve = false)
@@ -227,7 +227,7 @@ system, basis, model, factorization = Main.tJmodel1D.run(system, eigsolve = fals
 
 ### Operators
 
-Operators are defined in module `Operators`. You can use any of the predefiend operators listed below.
+Operators are defined in module `Operators`. You can use any of the predefined operators listed below.
 
 #### List of operators
 
@@ -269,8 +269,8 @@ For example, this is how to remove an electron with spin up and with momentum ``
 operator = Main.Operators.ck_up
 result = Main.Operators.applyOperator(system, ψ, operator, 0)
 ```
-The first 3 arguments are always `system`, wave function `ψ` and `operator`. Futher arguments are considered `operator` indices and will be passed to the `operator` function. 
-It is important to remember that the above `result` may in general overlap with many different subspaces of the model.
+The first 3 arguments are always `system`, wave function `ψ` and `operator`. Further arguments are considered `operator` indices and will be passed to the `operator` function. 
+It is important to remember that the above `result` may in general overlap with multiple subspaces of the model.
 The `result` is a hash table with keys of type [`System`](@ref Main.tJmodel1D.System) describing the resulting subspaces and values of type `Vector{ComplexF64}` representing corresponding subspace wave-functions.
 ```@example
 result = Main.Operators.SystemWaveFunction(Main.tJmodel1D.System() => [1.0im, 0.0]) # hide
@@ -312,7 +312,7 @@ The following formula shows what kind of expression can be evaluated.
 ```math
 \langle \psi \vert \hat{O}_{I}^{\dag} \frac{1}{\omega - \hat{H} + i\delta} \hat{O}_{I} \vert \psi \rangle
 ```
-Above, ``\psi`` is any wave-function defined for a certain `system` subspace. Operator ``\hat{O}_{I}`` is any operator expressable in magnon-holon basis (i.e. with holon and magnon creation and annihilation operators).
+Above, ``\psi`` is any wave-function defined for a certain `system` subspace. Operator ``\hat{O}_{I}`` is any operator expressible in magnon-holon basis (i.e. with holon and magnon creation and annihilation operators).
 This operator can depend on any arbitrary ordered collection of indices ``I``. For example ``I=(k,q)`` might represent momenta of two particles introduced to the system. 
 
 To generate a correlation function, define your resolution parameters,
@@ -324,7 +324,7 @@ For example:
 ωRange = collect(-3:0.002:7)
 ```
 Smaller values of ``\delta`` will make features sharper and thinner. Accordingly, you need to set small enough step in ``\omega`` to resolve them.
-Otherwise there will be too few points per peak to properly cover its shape. Step ``\delta / 10`` is usually small enough.
+Otherwise, there will be too few points per peak to properly cover its shape. Step ``\delta / 10`` is usually small enough.
 
 If the operator you use takes arguments (i.e. it has some indices), define a set of arguments to iterate over. 
 For example, if you use ``\hat{S}_{k}^{+}``, define range of momenta ``k`` you want to evaluate.
