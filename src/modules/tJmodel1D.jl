@@ -438,6 +438,10 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                 if hasMomentum
                     ### calculate matrix coefficient
                     coefficient = system.t * exp(ik * distance) * sqrt(periodicity / newPeriodicity)
+                    # if fermion hops over the boundary add phase shift from anticommutation relations
+                    if j < i && iseven(system.electrons)
+                        coefficient = -coefficient
+                    end
 
                     ### create a new entry in linear combination
                     ### and set its corresponding coeffcient
