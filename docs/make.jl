@@ -21,3 +21,8 @@ makedocs(
         "Documentation" => "documentation.md"
     ]
 )
+
+deploydocs(
+    repo = "github.com/pwrzosek/tJMagnonHolon.git",
+)
+
