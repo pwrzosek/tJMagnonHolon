@@ -66,12 +66,12 @@ Main.Utils.saveData([data], name = "test")
 
 
 ### Plotting [optional; only for quick lookup]
-using Plots
-
-k = data["momentum"]
-ω = data["energy"]
-A = data["spectrum"]
-
-mapfig = heatmap(k, ω, A, clim = (0, 1), xlabel = "k / π", ylabel = "ω");
-display(mapfig) # image window will disappear if julia process stops
+# using Plots
+#
+# k = data["momentum"]
+# ω = data["energy"]
+# A = data["spectrum"]
+# 
+# mapfig = heatmap(k, ω, A, clim = (0, 1), xlabel = "k / π", ylabel = "ω");
+# display(mapfig) # image window will disappear if julia process stops
 
