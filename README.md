@@ -14,7 +14,7 @@ A set of modules for t-J model (related) Hamiltonians diagonalization and variou
 
 ## Guide
 
-The [Guide](https://pwrzosek.github.io/tJMagnonHolon/) provides a setup instruction
+The [Guide](https://pwrzosek.github.io/tJMagnonHolon/guide/) provides a setup instruction
 and a set of tutorials explaining how you can use **tJMagnonHolon** features.
 You will find there practical examples on how to run your calculations 
 or how to extend the existing code base with your own operators.
