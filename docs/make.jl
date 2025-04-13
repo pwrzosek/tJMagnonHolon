@@ -24,5 +24,6 @@ makedocs(
 
 deploydocs(
     repo = "github.com/pwrzosek/tJMagnonHolon.git",
+    target = "build",
 )
 
