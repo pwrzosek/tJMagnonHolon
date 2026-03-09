@@ -450,6 +450,7 @@ function ck_up(k::Int64; state::State, system::System)::SystemSuperposition
     _, _, periodicity, _ = getStateInfo(state, system)
 
     # evaluate operator action on state and assign result to proper subspace
+    signChange::bool = false # for tracking sign change due to anticommutation
     siteValue = 1
     for R in 0:(system.size-1)
         alpha = 0
@@ -478,6 +479,10 @@ function ck_up(k::Int64; state::State, system::System)::SystemSuperposition
                     
                     coefficient = normalization * phase
 
+                    if (signChange) 
+                        coefficient = -coefficient
+                    end
+
                     # update result
                     if ~haskey(result, newSystem)
                         result[newSystem] = Superposition()
@@ -491,6 +496,8 @@ function ck_up(k::Int64; state::State, system::System)::SystemSuperposition
                 end # if hasMomentum
 
             end # if alpha
+
+            signChange = !signChange
 
         end # if state.charges
 
