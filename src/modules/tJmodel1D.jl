@@ -196,7 +196,7 @@ function makeBasis(system::System)::Basis
             state = State(charges, magnons)
 
             ### obtain representative state and momentum match
-            hasMomentum, representative, _, _ = getStateInfo(state, system)
+            hasMomentum, representative, _, _, _ = getStateInfo(state, system)
 
             if hasMomentum
                 if ~haskey(basis, representative)
@@ -279,7 +279,7 @@ function isGreater(a::State, b::State)::Bool
 end
 
 """
-    getStateInfo(state::State, system::System) -> Tuple{Bool, State, Int64, Int64}
+    getStateInfo(state::State, system::System) -> Tuple{Bool, State, Int64, Int64, Bool}
 
 Return `(hasMomentum, representative, periodicity, distance)` where
 *   `hasMomentum::Bool`: `true` if `state` matches momentum of `system`, and `false` otherwise
@@ -287,7 +287,7 @@ Return `(hasMomentum, representative, periodicity, distance)` where
 *   `periodicity::Int64`: minimal `R` such that `state` shifted `2R` times with translation operator returns back to `state`
 *   `distance::Int64`: distance between `state` and `representative` state in number of even translations
 """
-function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, Int64}
+function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, Int64, Bool}
     ### initialize some constants for faster evaluation
     l::Int = system.size
     highestBit::Int = 1 << (l - 1)
@@ -302,12 +302,12 @@ function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, I
     periodicity::Int64 = 1
     signChange::Bool = false
     while (
-        singChange = signChange ⊻ (newState & 1);
+        singChange = signChange ⊻ (newState.charges & 1);
         newState = State(
             bitmov(newState.charges, l, false, hb = highestBit, hv = highestValue),
             bitmov(newState.magnons, l, false, hb = highestBit, hv = highestValue)
         );
-        singChange = signChange ⊻ (newState & 1);
+        singChange = signChange ⊻ (newState.charges & 1);
         newState = State(
             bitmov(newState.charges, l, false, hb = highestBit, hv = highestValue),
             bitmov(newState.magnons, l, false, hb = highestBit, hv = highestValue)
@@ -326,7 +326,7 @@ function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, I
     end
  
     hasMomentum = rem(system.momentum * periodicity, system.size / 2) == 0
-    return (hasMomentum, representative, periodicity, distance) #, signChange)
+    return (hasMomentum, representative, periodicity, distance, signChange)
 end
 
 """
@@ -405,7 +405,8 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                     newState = State(charges, xor(state.magnons, iValue + jValue))
 
                     ### get info about state after spin flip
-                    hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, system)
+                    hasMomentum, repState, newPeriodicity, distance, signChange = getStateInfo(newState, system)
+                    
 
                     ### check if it belongs to correct momentum subspace
                     ### if it does not, then ignore -- it will cancel out
@@ -413,6 +414,11 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                     if hasMomentum
                         ### calculate matrix coefficient
                         coefficient = 0.5 * system.J * system.α * exp(ik * distance) * sqrt(periodicity / newPeriodicity)
+
+                        # sign change from translating fermions over boundary when looking for representative state
+                        if signChange
+                            coefficient = -coefficient
+                        end  
 
                         ### create a new entry in linear combination
                         ### and set its corresponding coeffcient
@@ -437,7 +443,7 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                 newState = State(newCharges, newMagnons)
 
                 ### get info about state after electron/hole moved
-                hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, system)
+                hasMomentum, repState, newPeriodicity, distance, signChange = getStateInfo(newState, system)
 
                 ### check if it belongs to correct momentum subspace
                 ### if it does not, then ignore -- it will cancel out
@@ -445,10 +451,15 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                 if hasMomentum
                     ### calculate matrix coefficient
                     coefficient = system.t * exp(ik * distance) * sqrt(periodicity / newPeriodicity)
-                    # if fermion hops over the boundary add phase shift from anticommutation relations
+                    # if fermion hops over the boundary include sign change from anticommutation relations
                     if j < i && iseven(system.electrons)
                         coefficient = -coefficient
                     end
+                    
+                    # sign change from translating fermions over boundary when looking for representative state
+                    if signChange
+                        coefficient = -coefficient
+                    end  
 
                     ### create a new entry in linear combination
                     ### and set its corresponding coeffcient

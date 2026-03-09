@@ -78,7 +78,7 @@ function Sk_z(k::Int64; state::State, system::System)::SystemSuperposition
             newSystem = System(system, momentum = mod(p - k, N))
             # comment: p - k -> 2πi (p / N) - 2πi (2k / L)
         
-            hasMomentum, _, _, _ = getStateInfo(state, newSystem)
+            hasMomentum, _ = getStateInfo(state, newSystem)
 
             # assert periodicity-momentum match
             if hasMomentum
@@ -130,7 +130,7 @@ function Sr_z(r::Int64; state::State, system::System)::SystemSuperposition
                 newSystem = System(system, momentum = mod(p - q, N))
                 # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
             
-                hasMomentum, _, _, _ = getStateInfo(state, newSystem)
+                hasMomentum, _ = getStateInfo(state, newSystem)
 
                 # assert periodicity-momentum match
                 if hasMomentum
@@ -194,7 +194,7 @@ function Sk_plus(k::Int64; state::State, system::System)::SystemSuperposition
                 newSystem = System(system, spinsUp = system.spinsUp + 1, momentum = mod(p - k, N)) 
                 # comment: p - k -> 2πi (p / N) - 2πi (2k / L)
 
-                hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                 # assert periodicity-momentum match
                 if hasMomentum
@@ -262,7 +262,7 @@ function Sr_plus(r::Int64; state::State, system::System)
                     newSystem = System(system, spinsUp = system.spinsUp + 1, momentum = mod(p - q, N)) 
                     # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                    hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                    hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                     # assert periodicity-momentum match
                     if hasMomentum
@@ -331,7 +331,7 @@ function Sk_minus(k::Int64; state::State, system::System)::SystemSuperposition
                 newSystem = System(system, spinsUp = system.spinsUp - 1, momentum = mod(p - k, N)) 
                 # comment: p - k -> 2πi (p / N) - 2πi (2k / L)
 
-                hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                 # assert periodicity-momentum match
                 if hasMomentum
@@ -399,7 +399,7 @@ function Sr_minus(r::Int64; state::State, system::System)
                     newSystem = System(system, spinsUp = system.spinsUp - 1, momentum = mod(p - q, N)) 
                     # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                    hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                    hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                     # assert periodicity-momentum match
                     if hasMomentum
@@ -450,7 +450,7 @@ function ck_up(k::Int64; state::State, system::System)::SystemSuperposition
     _, _, periodicity, _ = getStateInfo(state, system)
 
     # evaluate operator action on state and assign result to proper subspace
-    signChange::Bool = false # for tracking sign change due to anticommutation
+    signChange::Bool = false # for tracking sign change due to anticommutation rule
     siteValue = 1
     for R in 0:(system.size-1)
         alpha = 0
@@ -470,7 +470,7 @@ function ck_up(k::Int64; state::State, system::System)::SystemSuperposition
                 newSystem = System(system, electrons = system.electrons - 1, spinsUp = system.spinsUp - 1, momentum = mod(p - k, N)) 
                 # comment: p - k -> 2πi (p / N) - 2πi (2k / L)
 
-                hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                hasMomentum, repState, newPeriodicity, distance, signChangeToRep = getStateInfo(newState, newSystem)
 
                 # assert periodicity-momentum match
                 if hasMomentum
@@ -479,7 +479,7 @@ function ck_up(k::Int64; state::State, system::System)::SystemSuperposition
                     
                     coefficient = normalization * phase
 
-                    if (signChange) 
+                    if (signChange ⊻ signChangeToRep) # total anticommutation sign change
                         coefficient = -coefficient
                     end
 
@@ -544,7 +544,7 @@ function cr_up(r::Int64; state::State, system::System)::SystemSuperposition
                     newSystem = System(system, electrons = system.electrons - 1, spinsUp = system.spinsUp - 1, momentum = mod(p - q, N)) 
                     # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                    hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                    hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                     # assert periodicity-momentum match
                     if hasMomentum
@@ -613,7 +613,7 @@ function ck_down(k::Int64; state::State, system::System)::SystemSuperposition
                 newSystem = System(system, electrons = system.electrons - 1, momentum = mod(p - k, N)) 
                 # comment: p - k -> 2πi (p / N) - 2πi (2k / L)
 
-                hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                 # assert periodicity-momentum match
                 if hasMomentum
@@ -681,7 +681,7 @@ function cr_down(r::Int64; state::State, system::System)::SystemSuperposition
                     newSystem = System(system, electrons = system.electrons - 1, momentum = mod(p - q, N)) 
                     # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                    hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                    hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                     # assert periodicity-momentum match
                     if hasMomentum
@@ -746,7 +746,7 @@ function ck_up_dag(k::Int64; state::State, system::System)::SystemSuperposition
             newSystem = System(system, electrons = system.electrons + 1, spinsUp = system.spinsUp + 1, momentum = mod(p - k, N)) 
             # comment: p - k -> 2πi (p / N) - 2πi (2k / L)
 
-            hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+            hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
             # assert periodicity-momentum match
             if hasMomentum
@@ -808,7 +808,7 @@ function cr_up_dag(r::Int64; state::State, system::System)::SystemSuperposition
                 newSystem = System(system, electrons = system.electrons + 1, spinsUp = system.spinsUp + 1, momentum = mod(p - q, N)) 
                 # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                 # assert periodicity-momentum match
                 if hasMomentum
@@ -871,7 +871,7 @@ function ck_down_dag(k::Int64; state::State, system::System)::SystemSuperpositio
             newSystem = System(system, electrons = system.electrons + 1, momentum = mod(p - k, N)) 
             # comment: p - k -> 2πi (p / N) - 2πi (2k / L)
 
-            hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+            hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
             # assert periodicity-momentum match
             if hasMomentum
@@ -934,7 +934,7 @@ function cr_down_dag(r::Int64; state::State, system::System)::SystemSuperpositio
                 newSystem = System(system, electrons = system.electrons + 1, momentum = mod(p - q, N)) 
                 # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                hasMomentum, repState, newPeriodicity, distance = getStateInfo(newState, newSystem)
+                hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
 
                 # assert periodicity-momentum match
                 if hasMomentum
