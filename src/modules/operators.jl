@@ -450,7 +450,7 @@ function ck_up(k::Int64; state::State, system::System)::SystemSuperposition
     _, _, periodicity, _ = getStateInfo(state, system)
 
     # evaluate operator action on state and assign result to proper subspace
-    signChange::bool = false # for tracking sign change due to anticommutation
+    signChange::Bool = false # for tracking sign change due to anticommutation
     siteValue = 1
     for R in 0:(system.size-1)
         alpha = 0

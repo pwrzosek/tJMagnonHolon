@@ -300,11 +300,14 @@ function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, I
     newState = state
     distance::Int64 = 0
     periodicity::Int64 = 1
+    signChange::Bool = false
     while (
+        singChange = signChange ⊻ (newState & 1);
         newState = State(
             bitmov(newState.charges, l, false, hb = highestBit, hv = highestValue),
             bitmov(newState.magnons, l, false, hb = highestBit, hv = highestValue)
         );
+        singChange = signChange ⊻ (newState & 1);
         newState = State(
             bitmov(newState.charges, l, false, hb = highestBit, hv = highestValue),
             bitmov(newState.magnons, l, false, hb = highestBit, hv = highestValue)
@@ -317,9 +320,13 @@ function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, I
         end
         periodicity += 1
     end
+
+    if isodd(system.electrons)
+        signChange = false
+    end
  
     hasMomentum = rem(system.momentum * periodicity, system.size / 2) == 0
-    return (hasMomentum, representative, periodicity, distance)
+    return (hasMomentum, representative, periodicity, distance) #, signChange)
 end
 
 """
