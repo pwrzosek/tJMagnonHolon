@@ -300,11 +300,14 @@ function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, I
     newState = state
     distance::Int64 = 0
     periodicity::Int64 = 1
+    phaseShift::Bool = false
     while (
+        phaseShift = phaseShift ⊻ (newState.charges & 1);
         newState = State(
             bitmov(newState.charges, l, false, hb = highestBit, hv = highestValue),
             bitmov(newState.magnons, l, false, hb = highestBit, hv = highestValue)
         );
+        phaseShift = phaseShift ⊻ (newState.charges & 1);
         newState = State(
             bitmov(newState.charges, l, false, hb = highestBit, hv = highestValue),
             bitmov(newState.magnons, l, false, hb = highestBit, hv = highestValue)
@@ -328,8 +331,19 @@ function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, I
             site = site << 1
         end
     end
- 
-    hasMomentum = rem(system.momentum * periodicity, system.size / 2) == 0
+
+    if isodd(system.electrons)
+        phaseShift = false
+    end
+
+    N::Int64 = system.size / 2;
+    momentumShift::Int64 = 0
+    if phaseShift
+        momentumShift = N / (2 * periodicity)
+    end
+    momentum = mod(system.momentum - momentumShift, N)
+    hasMomentum = rem(momentum * periodicity, N) == 0
+
     return (hasMomentum, representative, periodicity, distance, signChange)
 end
 
@@ -357,7 +371,7 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
     result = LinearCombination(fill(state, system.size + 1), zeros(Complex{Float64}, system.size + 1))
 
     ### set sublattice rotation masks
-    mask = sum(1 << k for k in 0:2:(system.size - 1))
+    mask = sum(1 << k for k in 0:2:(system.size - 1)) # not used anymore, probably can remove
 
     N::Int64 = system.size / 2
 
@@ -367,6 +381,9 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
         l::Int = system.size
         highestBit::Int = 1 << (l - 1)
         highestValue::Int = (1 << l) - 1
+
+        ### initialize iϕ = iπ/N 
+        iϕ::Complex{Float64} = 2.0 * pi * im / N
 
         ### initialize ik for faster exponent calculations
         ik::Complex{Float64} = 2.0 * pi * im * system.momentum / N
@@ -419,10 +436,16 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                         ### calculate matrix coefficient
                         coefficient = 0.5 * system.J * system.α * exp(ik * distance) * sqrt(periodicity / newPeriodicity)
 
+                        # ### only for even number of fermions
+                        # if iseven(system.electrons)
+                        #     ### apply phase shift due to D^N = -1 for even fermions count
+                        #     coefficient *= exp(iϕ)
+                        # end
+
                         # sign change from translating fermions over boundary when looking for representative state
                         if signChange
                             coefficient = -coefficient
-                        end  
+                        end
 
                         ### create a new entry in linear combination
                         ### and set its corresponding coeffcient
@@ -439,7 +462,7 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                 newMagnons = state.magnons
                 iMagnon, jMagnon = div(newMagnons & iValue, iValue), div(newMagnons & jValue, jValue)
                 if iMagnon == jMagnon # no magnons (other options are projcted out)
-                    newMagnons = xor(newMagnons, iValue + jValue) & newCharges # hole creates a magnon behids
+                    newMagnons = xor(newMagnons, iValue + jValue) & newCharges # hole creates a magnon behind
                 else # magnon (only one, other options are projected out or taken care of before)
                     newMagnons = newMagnons & newCharges # the hole annihilates magnon
                 end
@@ -455,12 +478,19 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                 if hasMomentum
                     ### calculate matrix coefficient
                     coefficient = system.t * exp(ik * distance) * sqrt(periodicity / newPeriodicity)
-                    # if fermion hops over the boundary include sign change from anticommutation relations
-                    if j < i && iseven(system.electrons)
-                        coefficient = -coefficient
+
+                    ### only for even number of fermions
+                    if iseven(system.electrons)
+                        # ### apply phase shift due to D^N = -1 for even fermions count
+                        # coefficient *= exp(iϕ)
+
+                        ### if fermion hops over the boundary include sign change from anticommutation relations
+                        if j < i
+                            coefficient = -coefficient
+                        end
                     end
                     
-                    # sign change from translating fermions over boundary when looking for representative state
+                    ### sign change from translating fermions over boundary when looking for representative state
                     if signChange
                         coefficient = -coefficient
                     end  
