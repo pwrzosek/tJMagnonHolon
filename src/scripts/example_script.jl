@@ -8,7 +8,7 @@ function script()::Data
 # 1. Define system    
     system = Main.tJmodel1D.System(
         t           = 1.0,      # hole hopping
-        J           = 0.4,      # spin coupling
+        J           = 1.0,      # spin coupling
         λ           = 1.0,      # magnon interaction
         α           = 1.0,      # XXZ anisotropy scaling 
         size        = 16,       # number of lattice sites
@@ -27,7 +27,7 @@ function script()::Data
     println("\n", info) # convergence info (good to check)
  
 # 3. Define operator
-    operator = Main.Operators.ck_up
+    operator = Main.Operators.Sk_plus
      
 # 4. Generate Greens function
     δ = 0.02
@@ -62,16 +62,16 @@ data = script()
 
 
 ### Saving Spectrum Data
-# Main.Utils.saveData([data], name = "test")
+Main.Utils.saveData([data], name = "test")
 
 
 ### Plotting [optional; only for quick lookup]
-using Plots
+# using Plots
 
-k = data["momentum"]
-ω = data["energy"]
-A = data["spectrum"]
+# k = data["momentum"]
+# ω = data["energy"]
+# A = data["spectrum"]
 
-mapfig = heatmap(k, ω, A, clim = (0, 1), xlabel = "k / π", ylabel = "ω");
-display(mapfig) # image window will disappear if julia process stops
+# mapfig = heatmap(k, ω, A, clim = (0, 1), xlabel = "k / π", ylabel = "ω", c = cgrad(:gist_heat, rev=true), framestyle = :box, widen=true);
+# display(mapfig) # image window will disappear if julia process stops
 
