@@ -477,7 +477,7 @@ function hamiltonian(state::State, basis::Basis, system::System)::LinearCombinat
                 ### with similar terms after summing over all the sites
                 if hasMomentum
                     ### calculate matrix coefficient
-                    coefficient = system.t * exp(ik * distance) * sqrt(periodicity / newPeriodicity)
+                    coefficient = -system.t * exp(ik * distance) * sqrt(periodicity / newPeriodicity)
 
                     ### only for even number of fermions
                     if iseven(system.electrons)
