@@ -870,6 +870,7 @@ function ck_down_dag(k::Int64; state::State, system::System)::SystemSuperpositio
     _, _, periodicity, _ = getStateInfo(state, system)
 
     # evaluate operator action on state and assign result to proper subspace
+    signChange::Bool = false # for tracking sign change due to anticommutation rule
     siteValue = 1
     for R in 0:(system.size-1)
         alpha = 0
@@ -885,7 +886,7 @@ function ck_down_dag(k::Int64; state::State, system::System)::SystemSuperpositio
             newSystem = System(system, electrons = system.electrons + 1, momentum = mod(p - k, N)) 
             # comment: p - k -> 2πi (p / N) - 2πi (2k / L)
 
-            hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
+            hasMomentum, repState, newPeriodicity, distance, signChangeToRep = getStateInfo(newState, newSystem)
 
             # assert periodicity-momentum match
             if hasMomentum
@@ -893,6 +894,10 @@ function ck_down_dag(k::Int64; state::State, system::System)::SystemSuperpositio
                 phase = exp(-ik * R - (ip - 2 * ik) * distance)
                 
                 coefficient = normalization * phase
+
+                if (signChange ⊻ signChangeToRep) # total anticommutation sign change
+                    coefficient = -coefficient
+                end
 
                 # update result
                 if ~haskey(result, newSystem)
@@ -905,6 +910,8 @@ function ck_down_dag(k::Int64; state::State, system::System)::SystemSuperpositio
                 end
                 
             end # if hasMomentum
+
+            signChange = !signChange
 
         end # if state.charges
 
