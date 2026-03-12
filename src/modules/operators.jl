@@ -266,7 +266,7 @@ function Sr_plus(r::Int64; state::State, system::System)
                     newSystem = System(system, spinsUp = system.spinsUp + 1, momentum = mod(p - q, N)) 
                     # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                    hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
+                    hasMomentum, repState, newPeriodicity, distance, signChangeToRep = getStateInfo(newState, newSystem)
 
                     # assert periodicity-momentum match
                     if hasMomentum
@@ -274,6 +274,10 @@ function Sr_plus(r::Int64; state::State, system::System)
                         phase = exp(-iq * (R - r) - (ip - 2 * iq) * distance)
                         
                         coefficient = normalization * phase
+
+                        if (signChangeToRep) # anticommutation sign change
+                            coefficient = -coefficient
+                        end
 
                         # update result
                         if ~haskey(result, newSystem)
@@ -407,7 +411,7 @@ function Sr_minus(r::Int64; state::State, system::System)
                     newSystem = System(system, spinsUp = system.spinsUp - 1, momentum = mod(p - q, N)) 
                     # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                    hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
+                    hasMomentum, repState, newPeriodicity, distance, signChangeToRep = getStateInfo(newState, newSystem)
 
                     # assert periodicity-momentum match
                     if hasMomentum
@@ -415,6 +419,10 @@ function Sr_minus(r::Int64; state::State, system::System)
                         phase = exp(-iq * (R - r) - (ip - 2 * iq) * distance)
                         
                         coefficient = normalization * phase
+
+                        if (signChangeToRep) # anticommutation sign change
+                            coefficient = -coefficient
+                        end
 
                         # update result
                         if ~haskey(result, newSystem)
