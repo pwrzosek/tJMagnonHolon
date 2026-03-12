@@ -525,6 +525,7 @@ function cr_up(r::Int64; state::State, system::System)::SystemSuperposition
     # evaluate operator action on state and assign result to proper subspace
     for q in 0:(system.size-1)
         iq::Complex{Float64} = 2.0 * pi * im * q / system.size
+        signChange::Bool = false # for tracking sign change due to anticommutation rule
         siteValue = 1
         for R in 0:(system.size-1)
             alpha = 0
@@ -544,7 +545,7 @@ function cr_up(r::Int64; state::State, system::System)::SystemSuperposition
                     newSystem = System(system, electrons = system.electrons - 1, spinsUp = system.spinsUp - 1, momentum = mod(p - q, N)) 
                     # comment: p - q -> 2πi (p / N) - 2πi (2q / L)
 
-                    hasMomentum, repState, newPeriodicity, distance, _ = getStateInfo(newState, newSystem)
+                    hasMomentum, repState, newPeriodicity, distance, signChangeToRep = getStateInfo(newState, newSystem)
 
                     # assert periodicity-momentum match
                     if hasMomentum
@@ -552,6 +553,10 @@ function cr_up(r::Int64; state::State, system::System)::SystemSuperposition
                         phase = exp(-iq * (R - r) - (ip - 2 * iq) * distance)
                         
                         coefficient = normalization * phase
+
+                        if (signChange ⊻ signChangeToRep) # total anticommutation sign change
+                            coefficient = -coefficient
+                        end
 
                         # update result
                         if ~haskey(result, newSystem)
@@ -566,6 +571,8 @@ function cr_up(r::Int64; state::State, system::System)::SystemSuperposition
                     end # if hasMomentum
 
                 end # if alpha
+
+                signChange = !signChange
 
             end # if state.charges
 
