@@ -47,7 +47,7 @@ function script()::Data
 # 5. Return whatever you need
     return Data(
         "whatever"      => 7,
-        "coupling"      => system.J,
+        "coupling"      => system.J,
         "interaction"   => system.λ,
         "size"          => system.size,
         "momentum"      => (2 / system.size) .* kRange, # momenta in units of π
@@ -74,4 +74,3 @@ Main.Utils.saveData([data], name = "test")
 
 # mapfig = heatmap(k, ω, A, clim = (0, 1), xlabel = "k / π", ylabel = "ω", c = cgrad(:gist_heat, rev=true), framestyle = :box, widen=true);
 # display(mapfig) # image window will disappear if julia process stops
-
