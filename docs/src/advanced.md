@@ -14,8 +14,7 @@ Let us start by denoting annihilation operators for magnon (hard-core boson) as 
 The *hard-core* nature of the boson comes from ``s = 1/2`` spin in the considered model.
 What we call the magnon-holon transformation is the procedure of rewriting operators in terms of ``\hat{a}`` and ``\hat{h}`` operators.
 Accordingly, we say that operator ``\hat{O}`` expressed in terms of ``\hat{a}`` and ``\hat{h}`` is in magnon-holon representation (or in magnon-holon basis).
-Considering magnons as excitations around perfect antiferromagnetic spin background, below set of equations define the magnon-holon representation 
-of the standard operators in the [tJMagnonHolon](@ref). We assume the system is one-dimensional with ``L = 2N`` sites, 0-based indexed, and ``N`` - positive integer.
+Considering magnons as excitations around a perfect antiferromagnetic spin background, the below set of equations defines the magnon-holon representation of the standard operators in the [tJMagnonHolon](@ref). We assume the system is one-dimensional with ``L = 2N`` sites, 0-based indexed, and ``N`` is a positive integer.
 
 On sublattice A (sites with even indices ``\{0, 2, 4, ..., L - 2\}``):
 ```math
@@ -79,8 +78,8 @@ We extend the above model by introducing two additional parameters:
 
 For numerical diagonalization of an abstract model like the one above, it is important to determine its symmetries. Those symmetries generate quantities that are conserved by the model. 
 When writing the matrix of the model Hamiltonian in a basis, the basis may incorporate those symmetries, i.e. the basis states can be taken as eigen-states of the symmetry operators.
-Eigen-states that correspond to different eigenvalues of the symmetry operator are orthogonal. Thus, Hamiltonian written in such a basis will consist of orthogonal blocks that can be
-enumerated by the eigenvalues of the symmetry operators used for the basis construction. Each such block can be diagonalized separately, decreasing the amount of memory needed
+Eigen-states that correspond to different eigenvalues of the symmetry operator are orthogonal. Thus, Hamiltonian written in such basis will consist of orthogonal blocks that can be
+enumerated by the eigenvalues of the symmetry operators used for the basis construction. Then, each block can be diagonalized separately, decreasing the amount of memory needed
 to store the Hamiltonian matrix and resulting eigen-states. But what constitutes a symmetry of our model? The word symmetry may be misleading in this case, since the symmetry does not have
 to reflect only geometrical properties. What we really look for when asking about the symmetries of the Hamiltonian, are operators that commute with the Hamiltonian,
 ```math
@@ -118,8 +117,7 @@ We will call ``\hat{D}`` an *even translation* operator. It of course commute wi
 
 All the above symmetries are incorporated in the [tJMagnonHolon](@ref). But there is still a room for improvements. For example, parity symmetry is another symmetry that can be taken into account.
 It is important to remember that additional symmetries will make the basis in itself more complex. This can make the obtained results difficult to analyze or interpret.
-Thus stopping at the translation operator is optimal. Allowed system sizes are only few sites smaller than maximum for available computers. At the same time, 
-basis construction is still easy to understand.
+Thus stopping at the translation operator is optimal. Allowed system sizes are only few sites smaller than maximum for available computers. At the same time, basis construction is still easy to understand.
 
 ---
 
@@ -152,6 +150,15 @@ It is also important to specify that only electron can carry a spin (holons are 
 the bit of the `spin` variable to ``0`` if corresponding bit of `charges` variable is ``0``.
 Therefore, only 3 out of 4 combinations are meaningful for us (``i``-th bit of `charges`, ``i``-th bit of `spins`) ``\in\{(0,0), (1,0), (1,1)\}``.
 
+The above representation determines physical states uniquely for bosonic systems. But electrons are fermions, and therefore the order of operators matters. It means the above basis determines states only with respect to a phase shift by ``\pi``. To disambiguate the phase multipliers, we have to connect each configuration of charges and spins with one chosen order of fermionic operators. To make it simple, we take a standard approach and order operators with respect to the site index they act on. 
+
+```math
+\begin{aligned}
+    \hat{c}^\dag_{0\sigma_0} \hat{c}^\dag_{1\sigma_1} \hat{c}^\dag_{2\sigma_2} ... \hat{c}^\dag_{n\sigma_n} \vert \varnothing \rangle 
+    = \vert \sigma_0 \sigma_1 \sigma_2 ... \sigma_n \rangle
+\end{aligned}
+```
+
 Before we follow with translation operator, let us transform the above representation to magnon-holon basis.
 We look at the details of the transformation to magnon-holon basis (operators defined at the beginning), and see that the transformation does not alter the electron/hole configuration. 
 We therefore use the above defined `charges` without changes.
@@ -170,7 +177,20 @@ After the rotation of sublattice A is performed, we land at the following repres
     - 1 at ``i``-th bit ``\to`` magnon at ``i``-th site,
     - 0 at ``i``-th bit ``\to`` no magnon ``i``-th site.
 We disambiguate the hole representation in the same way as before (there cannot be both the hole and the magnon at the same site).
-The above corresponds to the [`State`](@ref Main.tJmodel1D.State) structure in the [tJMagnonHolon](@ref) code.
+The above corresponds to the [`State`](@ref Main.tJmodel1D.State) structure in the [tJMagnonHolon](@ref) code. Since holons are fermions, we again chose the standard order of growing site index to represent 'charges' configuration. For bosons, like magnons, the order does not have to be specified, but we can assume the same scheme.
+
+```math
+\begin{aligned}
+    \hat{h}^\dag_{0} \hat{h}^\dag_{1} \hat{h}^\dag_{2} ... \hat{h}^\dag_{n}
+    \hat{a}^\dag_{0} \hat{a}^\dag_{1} \hat{a}^\dag_{2} ... \hat{a}^\dag_{n} 
+    \vert \varnothing \rangle = \left\vert 
+    \begin{matrix}
+    h_0 & h_1 & h_2 & ... & h_n \\
+    a_0 & a_1 & a_2 & ... & a_n
+    \end{matrix}
+    \right\rangle
+\end{aligned}
+```
 
 Let us now follow with introduction of *momentum states* - eigen-states of the even translation operator ``\hat{D}``.
 Let ``\vert s, L, N_e, n_\uparrow \rangle`` stand for a `state` with certain configuration of `charges` and `magnons` denoted by `s` 
@@ -199,11 +219,15 @@ such that ``\tilde{s}`` it the *smallest* out of all translations of particular 
 This is connected to normalizability of momentum states. Let us define periodicity of state ``\vert s \rangle``,
 as the minimal number ``R_s > 0`` of even translations that transform ``\vert s \rangle`` onto itself,
 ```math
-R_s = \min \{ r \in \mathbb{N} \setminus \{0\} : \hat{D}^{r} \vert s \rangle = \vert s \rangle \}.
+R_s = \min \{ r \in \mathbb{N} \setminus \{0\} : \hat{D}^{r} \vert s \rangle = \xi \vert s \rangle \},
 ```
-The compatibility of ``\vert s \rangle`` with ``k`` requires that,
+where ``\xi \in \{-1, 1\}`` represents possible phase shift from anticommutation relations when pushing fermions over the PBC. The compatibility of ``\vert s \rangle`` with ``k`` requires that for ``\xi = 1``,
 ```math
-kR_s\mod N = 0.
+kR_s\mod N = 0,
+```
+and for ``\xi = -1``,
+```math
+(k - \frac{N}{2R_s}) R_s \mod N = 0.
 ```
 If the above is fulfilled, the normalization factor ``N_s = \frac{N^2}{R_s}``. If the above is *not* fulfilled, then ``\vert s(k) \rangle \equiv 0`` is not normalizable.
 
@@ -233,7 +257,7 @@ We evaluate its action on a magnon-holon momentum basis state ``\vert \tilde{s}(
 \end{aligned}
 ```
 where ``(-1)^{R} \left( \frac{1}{2} - \hat{a}_{R} \hat{a}^{\dag}_{R} \right) \hat{h}^{\dag}_{R} \hat{h}_{R} \vert \tilde{s} \rangle = \alpha_R(\tilde{s}) \vert \tilde{s} \rangle``.
-We intentionally provide all transformations step by step to showcase the derivation procedure. We use the definition of the momentum representation (Fourier transform) for both the operator and the state.
+We provide all transformations step by step to showcase the derivation procedure. We use the definition of the momentum representation (Fourier transform) for both the operator and the state.
 We follow with the transformation of the operators to magnon-holon basis. Then we commute the even translation operator ``\hat{D}`` with other operators. Next 3 lines are probably least transparent.
 We change the summation order, rendering the action of the operators (other than even translation operator) independent of the Fourier transform to momentum space.
 Finally, we evaluate the action of operators on the state ``\vert \tilde{s} \rangle``, and we write the state back in the momentum space.
@@ -287,7 +311,7 @@ Of course, ``\beta^-_R(\tilde{s}) = -\alpha^-_R(\tilde{s})`` meaning that we can
 | ``R \in A``         | ``1``                                           | ``\frac{1}{2}``           |
 | ``R \in B``         | ``1``                                           | ``0``                     |
 
-From the above considerations, we see that the code for this operator shall first check if the value of ``\alpha^+_R(\tilde{s})`` is non-zero and only proceed if that's the case.
+where we ignored sign changes due to anticommutation relations. Whether the ``\alpha^+_R(\tilde{s})`` should be multiplied by an additional ``-1`` depends on the order of fermions in state ``\vert \tilde{s} \rangle``, position R, the resulting state ``\vert s^{\pm}_R \rangle`` after the spin flip, and the distance to its representative. From the above considerations, we see that the code for this operator shall first check if the value of ``\alpha^+_R(\tilde{s})`` is non-zero and only proceed if that's the case.
 Then the operators action on state ``\vert \tilde{s} \rangle`` simply alternates the ``R``-th bit of `magnons` variable, which equates to XORing `magnons` with ``2^R``.
 
 As one can expect, derivation for ``\hat{S}^-_k`` is analogical, with the same result form and following relations between coefficients,

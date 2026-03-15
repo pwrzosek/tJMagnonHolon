@@ -282,10 +282,11 @@ end
     getStateInfo(state::State, system::System) -> Tuple{Bool, State, Int64, Int64, Bool}
 
 Return `(hasMomentum, representative, periodicity, distance)` where
-*   `hasMomentum::Bool`: `true` if `state` matches momentum of `system`, and `false` otherwise
+*   `hasMomentum::Bool`: `true` if `state` matches momentum of `system` and `false` otherwise
 *   `representative::State`: representative state corresponding to `state`
-*   `periodicity::Int64`: minimal `R` such that `state` shifted `2R` times with translation operator returns back to `state`
-*   `distance::Int64`: distance between `state` and `representative` state in number of even translations
+*   `periodicity::Int64`: minimal `R` such that `state` shifted `R` times with even translation operator `D = T^2` returns back to `state` (phase factors are ignored)
+*   `distance::Int64`: distance between `state` and `representative` state in number of even translations `D = T^2`
+*   `signChange::Bool`: `true` if applying even translation `D = T^2` to `state` exactly `distance` times requires a factor of (-1) from anticommutation relations
 """
 function getStateInfo(state::State, system::System)::Tuple{Bool, State, Int64, Int64, Bool}
     ### initialize some constants for faster evaluation
